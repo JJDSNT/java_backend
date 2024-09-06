@@ -1,9 +1,9 @@
-package com.observatudo.backend.model;
+package com.observatudo.backend.domain.model;
 
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "cidade")
+@DiscriminatorValue("CIDADE")
 public class Cidade extends Localidade {
 
     @Id

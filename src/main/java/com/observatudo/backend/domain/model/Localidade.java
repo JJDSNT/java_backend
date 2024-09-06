@@ -1,11 +1,16 @@
-package com.observatudo.backend.model;
+package com.observatudo.backend.domain.model;
 
 import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "localidade")
-public class Localidade {
+@Table(name = "localidade") // Usar @Table apenas na classe base
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "tipo_localidade")
+public abstract class Localidade {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Id
     @Column(name = "codigo")

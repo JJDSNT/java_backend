@@ -1,11 +1,11 @@
-package com.observatudo.backend.model;
+package com.observatudo.backend.domain.model;
 
 import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "eixo_padrao")
-public class EixoPadrao {
+@Table(name = "eixo_usuario")
+public class EixoUsuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -13,21 +13,26 @@ public class EixoPadrao {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "eixo_id", nullable = false)
     private Eixo eixo;
 
     @ManyToMany
     @JoinTable(
-        name = "eixo_padrao_indicador",
-        joinColumns = @JoinColumn(name = "eixo_padrao_id", referencedColumnName = "id"),
+        name = "eixo_usuario_indicador",
+        joinColumns = @JoinColumn(name = "eixo_usuario_id", referencedColumnName = "id"),
         inverseJoinColumns = @JoinColumn(name = "indicador_id", referencedColumnName = "id")
     )
     private List<Indicador> indicadores;
 
     // Construtores
-    public EixoPadrao() {}
+    public EixoUsuario() {}
 
-    public EixoPadrao(Eixo eixo) {
+    public EixoUsuario(Usuario usuario, Eixo eixo) {
+        this.usuario = usuario;
         this.eixo = eixo;
     }
 
@@ -38,6 +43,14 @@ public class EixoPadrao {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public Eixo getEixo() {
@@ -56,3 +69,4 @@ public class EixoPadrao {
         this.indicadores = indicadores;
     }
 }
+

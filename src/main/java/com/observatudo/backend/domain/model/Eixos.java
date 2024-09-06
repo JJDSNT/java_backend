@@ -1,4 +1,4 @@
-package com.observatudo.backend.model;
+package com.observatudo.backend.domain.model;
 
 public enum Eixos {
     SAUDE(1),

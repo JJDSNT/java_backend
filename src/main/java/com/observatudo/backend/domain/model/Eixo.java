@@ -1,4 +1,4 @@
-package com.observatudo.backend.model;
+package com.observatudo.backend.domain.model;
 
 import jakarta.persistence.*;
 import java.util.List;
