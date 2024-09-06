@@ -1,9 +1,13 @@
 package com.observatudo.backend.domain.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class CidadeDTO {
     private Integer codigo;
     private String nome;
     private boolean capital;
+
+    @JsonIgnore
     private EstadoDTO estado;
 
     // Construtores, Getters e Setters
