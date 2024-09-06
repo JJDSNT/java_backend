@@ -1,42 +1,38 @@
 package com.observatudo.backend.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 
 @Entity
 @DiscriminatorValue("CIDADE")
 public class Cidade extends Localidade {
 
-    @Id
-    @Column(name = "codigo")
-    private Integer codigo;
-
-    @Column(name = "capital", nullable = true)
-    private Boolean capital;
-
     @ManyToOne
-    @JoinColumn(name = "estadoCodigo", nullable = false)
+    @JoinColumn(name = "estado_id")
+    @JsonBackReference
     private Estado estado;
 
-    // Construtor
-    public Cidade(Integer codigo, String nome, Boolean capital) {
-        super(codigo, nome); // Chama o construtor da classe pai Localidade
+    @Column(name = "capital")
+    private boolean capital;
+
+    // Construtor padrão
+    public Cidade() {
+        super(null, null);
+    }
+
+    // Construtor com parâmetros
+    public Cidade(Integer codigo, String nome, boolean capital) {
+        super(codigo, nome);
         this.capital = capital;
     }
 
     // Getters e Setters
-    public Integer getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(Integer codigo) {
-        this.codigo = codigo;
-    }
-
-    public Boolean getCapital() {
+    public boolean isCapital() {
         return capital;
     }
 
-    public void setCapital(Boolean capital) {
+    public void setCapital(boolean capital) {
         this.capital = capital;
     }
 

@@ -4,13 +4,9 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "localidade") // Usar @Table apenas na classe base
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipo_localidade")
 public abstract class Localidade {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
     @Id
     @Column(name = "codigo")
@@ -21,15 +17,6 @@ public abstract class Localidade {
 
     @OneToMany(mappedBy = "localidade", cascade = CascadeType.ALL)
     private List<ValorIndicador> valoresIndicador;
-
-    // Relacionamentos com Estado e Cidade (opcional)
-    /*
-    @OneToOne(mappedBy = "localidade", cascade = CascadeType.ALL)
-    private Estado estado;
-
-    @OneToOne(mappedBy = "localidade", cascade = CascadeType.ALL)
-    private Cidade cidade;
-    */
 
     // Construtor
     public Localidade(Integer codigo, String nome) {
@@ -61,23 +48,4 @@ public abstract class Localidade {
     public void setValoresIndicador(List<ValorIndicador> valoresIndicador) {
         this.valoresIndicador = valoresIndicador;
     }
-
-    // Relacionamentos com Estado e Cidade (opcional)
-    /*
-    public Estado getEstado() {
-        return estado;
-    }
-
-    public void setEstado(Estado estado) {
-        this.estado = estado;
-    }
-
-    public Cidade getCidade() {
-        return cidade;
-    }
-
-    public void setCidade(Cidade cidade) {
-        this.cidade = cidade;
-    }
-    */
 }

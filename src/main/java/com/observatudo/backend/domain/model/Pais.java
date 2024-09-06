@@ -4,15 +4,8 @@ import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
-@Table(name = "pais")
+@DiscriminatorValue("PAIS")
 public class Pais extends Localidade {
-
-    @Id
-    @Column(name = "codigo")
-    private Integer codigo;
-
-    @Column(name = "nome")
-    private String nome;
 
     @Column(name = "sigla")
     private String sigla;
@@ -21,16 +14,28 @@ public class Pais extends Localidade {
     private List<Estado> estados;
 
     @OneToOne
-    @JoinColumn(name = "capital_codigo")
+    @JoinColumn(name = "capital_id")
     private Cidade capital;
 
-    // Construtor
+    // Construtor padrão
+    public Pais() {
+        super(null, null); // Se a superclasse requer parâmetros, você deve fornecer valores padrão
+    }
+
+    // Construtores, Getters e Setters
     public Pais(Integer codigo, String nome, String sigla) {
-        super(codigo, nome); // Chama o construtor da classe pai Localidade
+        super(codigo, nome);
         this.sigla = sigla;
     }
 
-    // Métodos adicionais
+    public String getSigla() {
+        return sigla;
+    }
+
+    public void setSigla(String sigla) {
+        this.sigla = sigla;
+    }
+
     public List<Estado> getEstados() {
         return estados;
     }
@@ -45,30 +50,5 @@ public class Pais extends Localidade {
 
     public void setCapital(Cidade capital) {
         this.capital = capital;
-    }
-
-    // Getters e Setters para atributos
-    public Integer getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(Integer codigo) {
-        this.codigo = codigo;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public String getSigla() {
-        return sigla;
-    }
-
-    public void setSigla(String sigla) {
-        this.sigla = sigla;
     }
 }

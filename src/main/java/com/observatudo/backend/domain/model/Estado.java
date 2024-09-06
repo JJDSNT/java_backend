@@ -3,69 +3,52 @@ package com.observatudo.backend.domain.model;
 import jakarta.persistence.*;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
-@Table(name = "estado")
+@DiscriminatorValue("ESTADO")
 public class Estado extends Localidade {
 
-    @Id
-    @Column(name = "codigo")
-    private Integer codigo;
-
-    @Column(name = "nome")
-    private String nome;
+    @OneToMany(mappedBy = "estado", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Cidade> cidades;
 
     @Column(name = "sigla")
     private String sigla;
 
-    @OneToMany(mappedBy = "estado", cascade = CascadeType.ALL)
-    private List<Cidade> cidades;
+    @ManyToOne
+    @JoinColumn(name = "pais_id")
+    private Pais pais;
 
     @OneToOne
-    @JoinColumn(name = "capitalCodigo")
+    @JoinColumn(name = "capital_id")
     private Cidade capital;
 
-    @OneToOne
-    @JoinColumn(name = "codigo", referencedColumnName = "codigo")
-    private Localidade localidade;
-
-    // Construtor
-    public Estado(Integer codigo, String nome, String sigla) {
-        super(codigo, nome); // Chama o construtor da classe Localidade
-        this.sigla = sigla;
+    // Construtor padrão
+    public Estado() {
+        super(null, null); // Chama o construtor da superclasse com valores padrão
     }
 
-    // Métodos adicionais
-    public void adicionarCidade(Cidade cidade) {
-        this.cidades.add(cidade);
-    }
-
-    public void adicionarCapital(Cidade capital) {
-        this.capital = capital;
+    // Construtores, Getters e Setters
+    public Estado(Integer codigo, String nome, Pais pais) {
+        super(codigo, nome);
+        this.pais = pais;
     }
 
     public List<Cidade> getCidades() {
         return cidades;
     }
 
-    public Cidade getCapital() {
-        return capital;
+    public void setCidades(List<Cidade> cidades) {
+        this.cidades = cidades;
     }
 
-    // Getters e Setters
-    public Integer getCodigo() {
-        return codigo;
+    public Pais getPais() {
+        return pais;
     }
 
-    public void setCodigo(Integer codigo) {
-        this.codigo = codigo;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setPais(Pais pais) {
+        this.pais = pais;
     }
 
     public String getSigla() {
@@ -76,11 +59,12 @@ public class Estado extends Localidade {
         this.sigla = sigla;
     }
 
-    public void setCidades(List<Cidade> cidades) {
-        this.cidades = cidades;
+    public Cidade getCapital() {
+        return capital;
     }
 
     public void setCapital(Cidade capital) {
         this.capital = capital;
     }
+    
 }
