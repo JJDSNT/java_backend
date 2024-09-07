@@ -16,8 +16,10 @@ import com.observatudo.backend.domain.model.Estado;
 import com.observatudo.backend.domain.model.Fonte;
 import com.observatudo.backend.domain.model.Indicador;
 import com.observatudo.backend.domain.model.Pais;
+import com.observatudo.backend.domain.model.ValorIndicador;
 import com.observatudo.backend.domain.repository.CidadeRepository;
 import com.observatudo.backend.domain.repository.EstadoRepository;
+import com.observatudo.backend.domain.repository.FonteRepository;
 import com.observatudo.backend.domain.repository.IndicadorRepository;
 import com.observatudo.backend.domain.repository.PaisRepository;
 
@@ -36,13 +38,16 @@ public class DataLoader {
     @Autowired
     private IndicadorRepository indicadorRepository;
 
+    @Autowired
+    private FonteRepository fonteRepository;
+
     @PostConstruct
-    public void loadData() throws IOException, CsvException {
+    public void loadData() throws IOException, CsvException, Exception {
         loadPaises();
         loadEstados();
         loadCidades();
         atualizarCapitais();
-        // loadIndicadores();
+        loadIndicadores();
     }
 
     private void loadPaises() throws IOException, CsvException {
@@ -169,23 +174,54 @@ public class DataLoader {
         }
     }
 
-    // private void loadIndicadores() throws IOException, CsvException {
-    // ClassPathResource resource = new ClassPathResource("data/indicadores.csv");
-    // try (CSVReader reader = new CSVReader(new FileReader(resource.getFile()))) {
-    // List<String[]> rows = reader.readAll();
-    // rows.remove(0); // Skip header
+private void loadIndicadores() throws Exception {
+    String path = "src/main/resources/data/cidades_sustentaveis/indicadores.csv";
+    Fonte fonte = fonteRepository.findByNome("Cidades Sustentáveis");
 
-    // for (String[] row : rows) {
-    // String codigo = row[0];
-    // String nome = row[1];
-    // String descricao = row[2];
-    // String fonteNome = row[3];
-    // String fonteUrl = row[4];
+    if (fonte == null) {
+        // Criar a fonte se não existir
+        fonte = new Fonte();
+        fonte.setNome("Cidades Sustentáveis");
+        fonte.setUrl("https://www.cidadessustentaveis.org.br/dados-abertos");
+        fonteRepository.save(fonte);
+    }
 
-    // Fonte fonte = new Fonte(fonteNome, fonteUrl);
-    // Indicador indicador = new Indicador(codigo, nome, descricao, fonte);
-    // indicadorRepository.save(indicador);
-    // }
-    // }
-    // }
+    try (CSVReader reader = new CSVReader(new FileReader(path))) {
+        String[] nextLine;
+        reader.readNext(); // Pular a linha do cabeçalho
+        while ((nextLine = reader.readNext()) != null) {
+            String codigoIbge = nextLine[0];
+            String nomeIndicador = nextLine[6];
+            String descricaoIndicador = nextLine[11];
+
+            // Buscar a cidade associada pelo código IBGE
+            Cidade cidade = cidadeRepository.findByCodigo(Integer.parseInt(codigoIbge));
+
+            if (cidade != null) {
+                // Criar o indicador
+                Indicador indicador = new Indicador();
+                indicador.setId(Integer.parseInt(nextLine[5])); // ID do indicador
+                indicador.setNome(nomeIndicador);
+                indicador.setDescricao(descricaoIndicador);
+                indicador.setFonte(fonte);
+
+                // Associar o indicador à cidade
+                ValorIndicador valorIndicador = new ValorIndicador();
+                valorIndicador.setIndicador(indicador);
+                valorIndicador.setCidade(cidade);
+                valorIndicador.setAno(Integer.parseInt(nextLine[13]));
+                valorIndicador.setValor(Double.parseDouble(nextLine[14].replace(",", ".")));
+
+                indicador.getValoresIndicador().add(valorIndicador);
+
+                // Salvar o indicador
+                indicadorRepository.save(indicador);
+            } else {
+                System.out.println("Cidade não encontrada para o código IBGE: " + codigoIbge);
+            }
+        }
+    }
 }
+
+}
+

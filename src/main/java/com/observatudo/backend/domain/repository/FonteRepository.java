@@ -7,5 +7,7 @@ import com.observatudo.backend.domain.model.Fonte;
 
 @Repository
 public interface FonteRepository extends JpaRepository<Fonte, Integer> {
-    // Métodos de consulta personalizados podem ser definidos aqui, se necessário
+
+    Fonte findByNome(String string);
+
 }

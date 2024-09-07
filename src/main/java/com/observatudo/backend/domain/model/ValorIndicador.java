@@ -91,4 +91,14 @@ public class ValorIndicador {
     public Indicador getIndicadorValor() {
         return indicador;
     }
+
+    public void setCidade(Cidade cidade) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setCidade'");
+    }
+
+    public void setAno(int int1) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setAno'");
+    }
 }
