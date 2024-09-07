@@ -40,7 +40,7 @@ public class DataLoader {
     public void loadData() throws IOException, CsvException {
         loadPaises();
         loadEstados();
-        // loadCidades();
+        loadCidades();
         // loadIndicadores();
     }
 
