@@ -13,4 +13,4 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update  # Atualiza o schema automaticamente ao reiniciar
-    show-sql: true  # Mostra as queries SQL no console
+    show-sql: false  # Mostra as queries SQL no console
