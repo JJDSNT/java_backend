@@ -41,6 +41,7 @@ public class DataLoader {
         loadPaises();
         loadEstados();
         loadCidades();
+        atualizarCapitais();
         // loadIndicadores();
     }
 
@@ -120,6 +121,45 @@ public class DataLoader {
                     System.out.println("Estado não encontrado para o código UF: " + codigoUf);
                 }
             }
+        }
+    }
+    
+
+    private void atualizarCapitais() {
+        // Atualizar as capitais dos estados
+        List<Estado> estados = estadoRepository.findAll();
+    
+        for (Estado estado : estados) {
+            // Buscar a capital do estado (a cidade com "capital = true" pertencente ao estado)
+            Cidade capitalEstado = cidadeRepository.findByEstadoAndCapital(estado, true);
+    
+            if (capitalEstado != null) {
+                // Definir a capital do estado
+                estado.setCapital(capitalEstado);
+                estadoRepository.save(estado);
+                System.out.println("Capital do estado " + estado.getNome() + " atualizada para: " + capitalEstado.getNome());
+            } else {
+                System.out.println("Capital não encontrada para o estado: " + estado.getNome());
+            }
+        }
+    
+        // Atualizar a capital do país (no caso do Brasil, a capital será Brasília, que deve estar carregada)
+        Pais brasil = paisRepository.findByCodigo(1058); // Código do Brasil
+    
+        if (brasil != null) {
+            // Buscar a capital do Brasil (cidade com capital true em relação ao país)
+            Cidade capitalBrasil = cidadeRepository.findByCodigo(5300108); // Código IBGE de Brasília
+            
+            if (capitalBrasil != null) {
+                // Definir a capital do Brasil
+                brasil.setCapital(capitalBrasil);
+                paisRepository.save(brasil);
+                System.out.println("Capital do Brasil atualizada para: " + capitalBrasil.getNome());
+            } else {
+                System.out.println("Capital do Brasil não encontrada.");
+            }
+        } else {
+            System.out.println("País Brasil não encontrado.");
         }
     }
     
