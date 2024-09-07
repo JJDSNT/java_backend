@@ -7,5 +7,5 @@ import com.observatudo.backend.domain.model.Pais;
 
 @Repository
 public interface PaisRepository extends JpaRepository<Pais, Integer> {
-    // Métodos de consulta personalizados podem ser definidos aqui, se necessário
+    Pais findByCodigo(Integer codigo);
 }

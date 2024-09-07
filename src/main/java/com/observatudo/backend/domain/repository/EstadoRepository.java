@@ -7,5 +7,5 @@ import com.observatudo.backend.domain.model.Estado;
 
 @Repository
 public interface EstadoRepository extends JpaRepository<Estado, Integer> {
-    // Métodos de consulta personalizados podem ser definidos aqui, se necessário
+    Estado findByCodigo(Integer codigo);
 }

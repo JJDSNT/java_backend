@@ -7,5 +7,5 @@ import com.observatudo.backend.domain.model.Cidade;
 
 @Repository
 public interface CidadeRepository extends JpaRepository<Cidade, Integer> {
-    // Métodos de consulta personalizados podem ser definidos aqui, se necessário
+    Cidade findByCodigo(Integer codigo);
 }
