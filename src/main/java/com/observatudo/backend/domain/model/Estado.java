@@ -30,7 +30,7 @@ public class Estado extends Localidade {
     }
 
     // Construtores, Getters e Setters
-    public Estado(Integer codigo, String nome, Pais pais) {
+    public Estado(Integer codigo, String nome, String sigla, Pais pais) {
         super(codigo, nome);
         this.pais = pais;
     }
