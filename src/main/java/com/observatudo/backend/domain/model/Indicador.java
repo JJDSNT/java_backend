@@ -2,6 +2,7 @@ package com.observatudo.backend.domain.model;
 
 import jakarta.persistence.*;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Date;
 
 @Entity
@@ -52,8 +53,8 @@ public class Indicador {
     )
     private List<EixoUsuario> eixosUsuario;
 
-    @OneToMany(mappedBy = "indicador", cascade = CascadeType.ALL)
-    private List<ValorIndicador> valoresIndicador;
+    @OneToMany(mappedBy = "indicador", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<ValorIndicador> valoresIndicador = new ArrayList<>();
 
     // Construtores
     public Indicador() {}

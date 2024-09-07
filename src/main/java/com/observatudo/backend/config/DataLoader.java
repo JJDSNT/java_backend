@@ -9,6 +9,10 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.observatudo.backend.domain.model.Cidade;
@@ -41,6 +45,8 @@ public class DataLoader {
     @Autowired
     private FonteRepository fonteRepository;
 
+    private Fonte fonte;
+
     @PostConstruct
     public void loadData() throws IOException, CsvException, Exception {
         loadPaises();
@@ -60,7 +66,7 @@ public class DataLoader {
                 Integer codigo = Integer.parseInt(row[0]);
                 String nome = row[1];
                 String sigla = row[2];
-                Integer capitalCodigo = Integer.parseInt(row[3]);
+                // Integer capitalCodigo = Integer.parseInt(row[3]);
 
                 Pais pais = new Pais(codigo, nome, sigla);
                 // Define capital if needed
@@ -174,54 +180,91 @@ public class DataLoader {
         }
     }
 
-private void loadIndicadores() throws Exception {
-    String path = "src/main/resources/data/cidades_sustentaveis/indicadores.csv";
-    Fonte fonte = fonteRepository.findByNome("Cidades Sustentáveis");
+    private void loadIndicadores() throws Exception {
+        String path = "src/main/resources/data/cidades_sustentaveis/indicadores.csv";
+        initializeFonte();
 
-    if (fonte == null) {
-        // Criar a fonte se não existir
-        fonte = new Fonte();
-        fonte.setNome("Cidades Sustentáveis");
-        fonte.setUrl("https://www.cidadessustentaveis.org.br/dados-abertos");
-        fonteRepository.save(fonte);
+        try (CSVReader reader = new CSVReader(new FileReader(path))) {
+            reader.readNext(); // Pular o cabeçalho
+            List<String[]> lines = reader.readAll(); // Ler todas as linhas
+
+            for (String[] nextLine : lines) {
+                processLine(nextLine);
+            }
+        }
     }
 
-    try (CSVReader reader = new CSVReader(new FileReader(path))) {
-        String[] nextLine;
-        reader.readNext(); // Pular a linha do cabeçalho
-        while ((nextLine = reader.readNext()) != null) {
+    private void processLine(String[] nextLine) {
+        try {
+            if (nextLine.length < 15) {
+                System.out.println("Linha com colunas insuficientes: " + String.join(",", nextLine));
+                return;
+            }
+
             String codigoIbge = nextLine[0];
             String nomeIndicador = nextLine[6];
             String descricaoIndicador = nextLine[11];
+            String anoPreenchimento = nextLine[12];
+            String valorIndicadorStr = nextLine[13].replace(",", ".");
 
-            // Buscar a cidade associada pelo código IBGE
             Cidade cidade = cidadeRepository.findByCodigo(Integer.parseInt(codigoIbge));
 
             if (cidade != null) {
-                // Criar o indicador
-                Indicador indicador = new Indicador();
-                indicador.setId(Integer.parseInt(nextLine[5])); // ID do indicador
-                indicador.setNome(nomeIndicador);
-                indicador.setDescricao(descricaoIndicador);
-                indicador.setFonte(fonte);
+                Indicador indicador = indicadorRepository.findById(Integer.parseInt(nextLine[5]))
+                        .orElseGet(() -> {
+                            Indicador newIndicador = new Indicador();
+                            newIndicador.setId(Integer.parseInt(nextLine[5]));
+                            newIndicador.setNome(nomeIndicador);
+                            newIndicador.setDescricao(descricaoIndicador);
+                            newIndicador.setFonte(fonte);
+                            return newIndicador;
+                        });
 
-                // Associar o indicador à cidade
                 ValorIndicador valorIndicador = new ValorIndicador();
                 valorIndicador.setIndicador(indicador);
-                valorIndicador.setCidade(cidade);
-                valorIndicador.setAno(Integer.parseInt(nextLine[13]));
-                valorIndicador.setValor(Double.parseDouble(nextLine[14].replace(",", ".")));
+                valorIndicador.setLocalidade(cidade);
+
+                try {
+                    LocalDate localDate = LocalDate.of(Integer.parseInt(anoPreenchimento), 1, 1);
+                    Date data = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+                    valorIndicador.setData(data);
+                } catch (Exception e) {
+                    System.out.println("Formato de ano inválido: " + anoPreenchimento);
+                }
+
+                if (!valorIndicadorStr.isEmpty() && !valorIndicadorStr.equals("0")) {
+                    try {
+                        valorIndicador.setValor(Double.parseDouble(valorIndicadorStr));
+                    } catch (NumberFormatException e) {
+                        System.out.println("Erro ao converter valor do indicador para número: " + valorIndicadorStr);
+                        return;
+                    }
+                }
+
+                if (indicador.getValoresIndicador() == null) {
+                    indicador.setValoresIndicador(new ArrayList<>());
+                }
 
                 indicador.getValoresIndicador().add(valorIndicador);
-
-                // Salvar o indicador
                 indicadorRepository.save(indicador);
             } else {
                 System.out.println("Cidade não encontrada para o código IBGE: " + codigoIbge);
             }
+        } catch (Exception e) {
+            System.err.println("Erro ao processar linha: " + String.join(",", nextLine));
+            e.printStackTrace();
         }
     }
-}
 
+    private void initializeFonte() {
+        fonte = fonteRepository.findByNome("Cidades Sustentáveis");
+        if (fonte == null) {
+            fonte = new Fonte();
+            fonte.setNome("Cidades Sustentáveis");
+            fonte.setUrl("https://www.cidadessustentaveis.org.br/dados-abertos");
+            fonteRepository.save(fonte);
+        }
+    }
+    
+    
 }
-
