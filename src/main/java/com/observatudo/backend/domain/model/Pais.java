@@ -14,7 +14,7 @@ public class Pais extends Localidade {
     private List<Estado> estados;
 
     @OneToOne
-    @JoinColumn(name = "capital_id")
+    @JoinColumn(name = "capital_pais_id")
     private Cidade capital;
 
     // Construtor padrão

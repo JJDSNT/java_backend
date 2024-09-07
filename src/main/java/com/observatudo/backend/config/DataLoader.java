@@ -158,8 +158,8 @@ public class DataLoader {
 
             if (capitalBrasil != null) {
                 // Definir a capital do Brasil
-                //brasil.setCapital(capitalBrasil);
-                //paisRepository.save(brasil);
+                brasil.setCapital(capitalBrasil);
+                paisRepository.save(brasil);
                 System.out.println("Capital do Brasil atualizada para: " + capitalBrasil.getNome());
             } else {
                 System.out.println("Capital do Brasil não encontrada.");
