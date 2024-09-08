@@ -1,4 +1,4 @@
-package com.observatudo.backend.service.Indicadores;
+package com.observatudo.backend.service.indicadores;
 
 public interface IndicadorLoaderStrategy {
     void loadIndicadores();
