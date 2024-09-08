@@ -1,7 +1,8 @@
 package com.observatudo.backend.config;
 
-import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,6 @@ public class LocalidadesLoaderService {
 
     private static final Logger logger = LoggerFactory.getLogger(LocalidadesLoaderService.class);
 
-    // Definição de paths no início do arquivo para modularização
     private static final String PATH_PAISES = "data/ibge/pais.csv";
     private static final String PATH_ESTADOS = "data/ibge/estados.csv";
     private static final String PATH_CIDADES = "data/ibge/municipios_c_capital.csv";
@@ -42,9 +42,8 @@ public class LocalidadesLoaderService {
     @Autowired
     private CidadeRepository cidadeRepository;
 
-    private Map<Integer, Integer> paisCapitalMap = new HashMap<>(); // Armazena país e capital
+    private Map<Integer, Integer> paisCapitalMap = new HashMap<>();
 
-    // Método público que coordena o carregamento de todas as localidades
     public void loadLocalidades() {
         try {
             loadPaises();
@@ -56,18 +55,20 @@ public class LocalidadesLoaderService {
         }
     }
 
-    // Métodos privados para carregamento específico
     private void loadPaises() throws IOException, CsvException {
         ClassPathResource resource = new ClassPathResource(PATH_PAISES);
-        try (CSVReader reader = new CSVReader(new FileReader(resource.getFile()))) {
-            List<String[]> rows = reader.readAll();
+        try (Reader reader = new InputStreamReader(resource.getInputStream());
+             CSVReader csvReader = new CSVReader(reader)) {
+
+            List<String[]> rows = csvReader.readAll();
             rows.remove(0); // Pular cabeçalho
-            logger.info("Carregando paises ...");
+
+            logger.info("Carregando países ...");
             for (String[] row : rows) {
                 Integer codigo = Integer.parseInt(row[0]);
                 String nome = row[1];
                 String sigla = row[2];
-                Integer capitalCodigo = Integer.parseInt(row[3]); // Código da capital
+                Integer capitalCodigo = Integer.parseInt(row[3]);
 
                 paisCapitalMap.put(codigo, capitalCodigo);
 
@@ -76,7 +77,7 @@ public class LocalidadesLoaderService {
                     paisRepository.save(pais);
                     logger.info("País {} criado", pais.getNome());
                 } else {
-                    logger.info("País {} já existe no banco de dados", nome);
+                    logger.debug("País {} já existe no banco de dados", nome);
                 }
             }
         }
@@ -84,9 +85,12 @@ public class LocalidadesLoaderService {
 
     private void loadEstados() throws IOException, CsvException {
         ClassPathResource resource = new ClassPathResource(PATH_ESTADOS);
-        try (CSVReader reader = new CSVReader(new FileReader(resource.getFile()))) {
-            List<String[]> rows = reader.readAll();
+        try (Reader reader = new InputStreamReader(resource.getInputStream());
+             CSVReader csvReader = new CSVReader(reader)) {
+
+            List<String[]> rows = csvReader.readAll();
             rows.remove(0); // Pular cabeçalho
+
             logger.info("Carregando estados ...");
             for (String[] row : rows) {
                 Integer codigo = Integer.parseInt(row[0]);
@@ -101,7 +105,7 @@ public class LocalidadesLoaderService {
                     estadoRepository.save(estado);
                     logger.info("Estado {} criado", estado.getNome());
                 } else {
-                    logger.info("Estado {} já existe no banco de dados", nome);
+                    logger.debug("Estado {} já existe no banco de dados", nome);
                 }
             }
         }
@@ -109,10 +113,12 @@ public class LocalidadesLoaderService {
 
     private void loadCidades() throws IOException, CsvException {
         ClassPathResource resource = new ClassPathResource(PATH_CIDADES);
+        try (Reader reader = new InputStreamReader(resource.getInputStream());
+             CSVReader csvReader = new CSVReader(reader)) {
 
-        try (CSVReader reader = new CSVReader(new FileReader(resource.getFile()))) {
-            List<String[]> rows = reader.readAll();
-            rows.remove(0); // Remover o cabeçalho
+            List<String[]> rows = csvReader.readAll();
+            rows.remove(0); // Remover cabeçalho
+
             logger.info("Carregando cidades ...");
             for (String[] row : rows) {
                 Integer codigoIbge = Integer.parseInt(row[0]);
@@ -123,7 +129,6 @@ public class LocalidadesLoaderService {
                 Estado estado = estadoRepository.findByCodigo(codigoUf);
 
                 if (estado != null) {
-                    //logger.info("Criando cidades de {}", estado.getNome());
                     if (cidadeRepository.findByCodigo(codigoIbge) == null) {
                         Cidade cidade = new Cidade();
                         cidade.setCodigo(codigoIbge);
@@ -131,15 +136,15 @@ public class LocalidadesLoaderService {
                         cidade.setCapital(capital);
                         cidade.setEstado(estado);
                         cidadeRepository.save(cidade);
-                        //logger.info("Cidade {} criada", cidade.getNome());
+                        logger.debug("Cidade {} criada", cidade.getNome());
                     } else {
-                        logger.info("Cidade {} já existe no banco de dados", nome);
+                        logger.debug("Cidade {} já existe no banco de dados", nome);
                     }
                 } else {
                     logger.error("Estado não encontrado para o código UF: {}", codigoUf);
                 }
             }
-            logger.info("Cidades criadas");
+            logger.info("Cidades carregadas");
         }
     }
 
