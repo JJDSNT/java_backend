@@ -15,15 +15,18 @@ Prefeitura Municipal de Abadia dos Dourados - MG;3100104;MG;6972;0,165696027;A;0
 
 package com.observatudo.backend.service.indicadores.impl;
 
-import com.observatudo.backend.service.indicadores.BaseIndicadorLoaderStrategy;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import com.observatudo.backend.exception.ErrorHandler;
 import org.springframework.stereotype.Component;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.List;
+import com.observatudo.backend.service.indicadores.BaseIndicadorLoaderStrategy;
 
 @Component
 public class CapagLoader extends BaseIndicadorLoaderStrategy {
@@ -34,8 +37,11 @@ public class CapagLoader extends BaseIndicadorLoaderStrategy {
     private static final String PATH_ESTADOS = "src/main/resources/data/dados_govbr/capag/estados/CAPAG.csv";
     private static final String PATH_MUNICIPIOS = "src/main/resources/data/dados_govbr/capag/municipios/CAPAG-Municipios.csv";
 
+    private static final Logger logger = LoggerFactory.getLogger(CapagLoader.class);
+
     @Override
     public void loadIndicadores() {
+        logger.info("Carregando indicadores do cidades sustentaveis...");
         initializeFonte(NOME_FONTE, URL_FONTE);
 
         // Processar arquivo de estados
@@ -47,6 +53,7 @@ public class CapagLoader extends BaseIndicadorLoaderStrategy {
 
     private void processCsvFile(String path, boolean isEstadosFile) {
         try (CSVReader reader = new CSVReader(new FileReader(path))) {
+            @SuppressWarnings("unused")
             String[] header = reader.readNext(); // Ler o cabeçalho
 
             if (isEstadosFile) {
