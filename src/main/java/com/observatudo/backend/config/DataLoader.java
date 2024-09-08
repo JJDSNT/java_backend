@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 
 import com.observatudo.backend.service.IndicadorService;
-import com.observatudo.backend.config.LocalidadesLoaderService;
+//import com.observatudo.backend.config.LocalidadesLoaderService;
 
 @Component
 public class DataLoader {
