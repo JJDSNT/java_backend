@@ -1,25 +1,21 @@
 package com.observatudo.backend.domain.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 public class CidadeDTO {
     private Integer codigo;
     private String nome;
     private boolean capital;
 
-    @JsonIgnore
-    private EstadoDTO estado;
-
-    // Construtores, Getters e Setters
+    // Construtor padrão
     public CidadeDTO() {}
 
-    public CidadeDTO(Integer codigo, String nome, boolean capital, EstadoDTO estado) {
+    // Construtor com parâmetros
+    public CidadeDTO(Integer codigo, String nome, boolean capital) {
         this.codigo = codigo;
         this.nome = nome;
         this.capital = capital;
-        this.estado = estado;
     }
 
+    // Getters e Setters
     public Integer getCodigo() {
         return codigo;
     }
@@ -44,11 +40,12 @@ public class CidadeDTO {
         this.capital = capital;
     }
 
-    public EstadoDTO getEstado() {
-        return estado;
-    }
-
-    public void setEstado(EstadoDTO estado) {
-        this.estado = estado;
+    @Override
+    public String toString() {
+        return "CidadeDTO{" +
+               "codigo=" + codigo +
+               ", nome='" + nome + '\'' +
+               ", capital=" + capital +
+               '}';
     }
 }
