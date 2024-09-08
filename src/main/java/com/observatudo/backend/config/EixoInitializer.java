@@ -20,7 +20,7 @@ public class EixoInitializer {
     public void initialize() {
         List<Eixo> eixos = Arrays.asList(
             new Eixo(Eixos.SAUDE, "Saúde", "Saúde", "icon1", "cor1"),
-            new Eixo(Eixos.EDUCACAO, "Educação", "Educação", "icon2", "cor2"),
+            new Eixo(Eixos.EDUCACAO, "Educação", "Educação", "icon2", "cor2")
             // Adicione outros eixos conforme necessário
         );
 
