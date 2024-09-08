@@ -1,29 +1,22 @@
 package com.observatudo.backend.service;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.observatudo.backend.domain.dto.IndicadorDTO;
 import org.springframework.stereotype.Service;
 
-import com.observatudo.backend.service.indicadores.IndicadorLoaderStrategy;
-import com.observatudo.backend.exception.ErrorHandler;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class IndicadorService {
 
-    @Autowired
-    private List<IndicadorLoaderStrategy> indicadorLoaderStrategies;
+    private List<IndicadorDTO> indicadores = new ArrayList<>();
 
-    public void loadIndicadores(String tipo) {
-        IndicadorLoaderStrategy strategy = indicadorLoaderStrategies.stream()
-            .filter(s -> s.supports(tipo))
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Tipo de indicador não reconhecido"));
-
-        try {
-            strategy.loadIndicadores();
-        } catch (Exception e) {
-            ErrorHandler.logError("Erro ao carregar indicadores", e);
-        }
+    public List<IndicadorDTO> listarIndicadores() {
+        return indicadores;
     }
+
+    // public IndicadorDTO adicionarIndicador(IndicadorDTO indicadorDTO) {
+    //     indicadores.add(indicadorDTO);
+    //     return indicadorDTO;
+    // }
 }
