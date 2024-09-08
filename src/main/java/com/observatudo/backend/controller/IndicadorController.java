@@ -1,7 +1,7 @@
 package com.observatudo.backend.controller;
 
 import com.observatudo.backend.domain.dto.IndicadorDTO;
-import com.observatudo.backend.loader.IndicadoresLoader;
+import com.observatudo.backend.service.IndicadorService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,7 +15,7 @@ import java.util.List;
 public class IndicadorController {
 
     @Autowired
-    private IndicadoresLoader indicadorService;
+    private IndicadorService indicadorService;
 
     @GetMapping
     public ResponseEntity<List<IndicadorDTO>> listarIndicadores() {

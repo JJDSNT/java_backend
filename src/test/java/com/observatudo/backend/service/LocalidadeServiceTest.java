@@ -24,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.observatudo.backend.config.LocalidadesLoaderService;
 import com.observatudo.backend.domain.dto.CidadeDTO;
 import com.observatudo.backend.domain.dto.EstadoDTO;
 import com.observatudo.backend.domain.model.Cidade;
@@ -32,13 +31,14 @@ import com.observatudo.backend.domain.model.Estado;
 import com.observatudo.backend.domain.repository.CidadeRepository;
 import com.observatudo.backend.domain.repository.EstadoRepository;
 import com.observatudo.backend.domain.repository.PaisRepository;
+import com.observatudo.backend.loader.LocalidadesLoader;
 
 @SpringBootTest
 @Transactional
 public class LocalidadeServiceTest {
 
     @Autowired
-    private LocalidadesLoaderService localidadesLoaderService;
+    private LocalidadesLoader localidadesLoaderService;
 
     @Autowired
     private LocalidadeService localidadeService;
