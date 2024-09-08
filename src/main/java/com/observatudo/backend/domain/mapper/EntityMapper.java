@@ -9,19 +9,20 @@ import java.util.List;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
 public interface EntityMapper {
-    EntityMapper INSTANCE = Mappers.getMapper(EntityMapper.class);
 
+    // Mapeia Estado para EstadoDTO
     @Mapping(target = "cidades", source = "cidades")
     EstadoDTO estadoToEstadoDTO(Estado estado);
 
-    @Mapping(target = "estado", ignore = true)
+    // Mapeia Cidade para CidadeDTO
     CidadeDTO cidadeToCidadeDTO(Cidade cidade);
 
-    List<CidadeDTO> cidadeListToCidadeDTOList(List<Cidade> cidades);
-    
+    // Mapeia lista de Estado para lista de EstadoDTO
     List<EstadoDTO> estadoListToEstadoDTOList(List<Estado> estados);
+
+    // Mapeia lista de Cidade para lista de CidadeDTO
+    List<CidadeDTO> cidadeListToCidadeDTOList(List<Cidade> cidades);
 }
