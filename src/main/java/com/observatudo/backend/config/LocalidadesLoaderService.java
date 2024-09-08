@@ -123,6 +123,7 @@ public class LocalidadesLoaderService {
                 Estado estado = estadoRepository.findByCodigo(codigoUf);
 
                 if (estado != null) {
+                    //logger.info("Criando cidades de {}", estado.getNome());
                     if (cidadeRepository.findByCodigo(codigoIbge) == null) {
                         Cidade cidade = new Cidade();
                         cidade.setCodigo(codigoIbge);
@@ -130,7 +131,7 @@ public class LocalidadesLoaderService {
                         cidade.setCapital(capital);
                         cidade.setEstado(estado);
                         cidadeRepository.save(cidade);
-                        logger.info("Cidade {} criada", cidade.getNome());
+                        //logger.info("Cidade {} criada", cidade.getNome());
                     } else {
                         logger.info("Cidade {} já existe no banco de dados", nome);
                     }
