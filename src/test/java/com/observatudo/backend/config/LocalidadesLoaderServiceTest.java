@@ -1,138 +1,147 @@
-package com.observatudo.backend.config;
+/*
+ * testLoadLocalidadesCount: Verifica a contagem de países, estados e cidades após o carregamento.
+ * testLoadLocalidades: Carrega e verifica a integridade dos dados de localidades, incluindo a capital do Brasil.
+ * testPaisEstadoCidadeAssociacao: Verifica as associações entre país, estado e cidade.
+ * testIntegridadeDasRelacoes: Verifica a integridade das relações entre estados e cidades.
+ */
 
-import static org.junit.jupiter.api.Assertions.*;
+ package com.observatudo.backend.config;
 
-import java.util.List;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.test.annotation.DirtiesContext;
-
-import com.observatudo.backend.domain.model.Cidade;
-import com.observatudo.backend.domain.model.Estado;
-import com.observatudo.backend.domain.model.Pais;
-import com.observatudo.backend.domain.repository.CidadeRepository;
-import com.observatudo.backend.domain.repository.EstadoRepository;
-import com.observatudo.backend.domain.repository.PaisRepository;
-
-@SpringBootTest
-@Transactional
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-public class LocalidadesLoaderServiceTest {
-
-    @Autowired
-    private LocalidadesLoaderService localidadesLoaderService;
-
-    @Autowired
-    private PaisRepository paisRepository;
-
-    @Autowired
-    private EstadoRepository estadoRepository;
-
-    @Autowired
-    private CidadeRepository cidadeRepository;
-
-    @BeforeEach
-    public void setup() {
-        // Limpar as tabelas antes de cada teste
-        paisRepository.deleteAll();
-        estadoRepository.deleteAll();
-        cidadeRepository.deleteAll();
-    }
-
-    @Test
-    public void testLoadLocalidades() throws Exception {
-        // Carregar todas as localidades
-        localidadesLoaderService.loadLocalidades();
-
-        // Verificar se os países foram carregados
-        List<Pais> paises = paisRepository.findAll();
-        assertNotNull(paises);
-        assertFalse(paises.isEmpty()); // Ajuste conforme a quantidade esperada
-
-        // Verificar se um país específico foi carregado corretamente
-        Pais brasil = paisRepository.findByCodigo(1058);
-        assertNotNull(brasil);
-        assertEquals("Brasil", brasil.getNome());
-
-        // Verificar se os estados foram carregados
-        List<Estado> estados = estadoRepository.findAll();
-        assertNotNull(estados);
-        assertFalse(estados.isEmpty()); // Ajuste conforme a quantidade esperada
-
-        // Verificar se um estado específico foi carregado corretamente
-        Estado saoPaulo = estadoRepository.findByCodigo(35);
-        assertNotNull(saoPaulo);
-        assertEquals("São Paulo", saoPaulo.getNome());
-
-        // Verificar se as cidades foram carregadas
-        List<Cidade> cidades = cidadeRepository.findAll();
-        assertNotNull(cidades);
-        assertFalse(cidades.isEmpty()); // Ajuste conforme a quantidade esperada
-
-        // Verificar se uma cidade específica foi carregada corretamente
-        Cidade saoPauloCidade = cidadeRepository.findByCodigo(3550308); // Código IBGE de São Paulo
-        assertNotNull(saoPauloCidade);
-        assertEquals("São Paulo", saoPauloCidade.getNome());
-        assertTrue(saoPauloCidade.isCapital());
-
-        // Verificar se a capital do Brasil foi corretamente atualizada
-        Pais brasilAtualizado = paisRepository.findByCodigo(1058); // Código do Brasil
-        assertNotNull(brasilAtualizado);
-        assertNotNull(brasilAtualizado.getCapital());
-        assertEquals("Brasília", brasilAtualizado.getCapital().getNome());
-    }
-
-    @Test
-    public void testEstadoComCidades() throws Exception {
-        // Carregar os dados necessários
-        localidadesLoaderService.loadLocalidades();
-
-        // Verificar se um estado específico tem as cidades esperadas
-        Estado saoPaulo = estadoRepository.findByCodigo(35); // Código do estado de São Paulo
-        assertNotNull(saoPaulo);
-
-        // Verificar as cidades associadas ao estado de São Paulo
-        List<Cidade> cidadesDeSaoPaulo = cidadeRepository.findByEstado(saoPaulo);
-        assertNotNull(cidadesDeSaoPaulo);
-        assertFalse(cidadesDeSaoPaulo.isEmpty());
-
-        // Verificar se uma cidade específica está associada ao estado de São Paulo
-        Cidade saoPauloCidade = cidadeRepository.findByCodigo(3550308); // Código IBGE de São Paulo
-        assertNotNull(saoPauloCidade);
-        assertEquals(saoPaulo, saoPauloCidade.getEstado());
-    }
-
-    @Test
-    public void testCidadeComEstado() throws Exception {
-        // Carregar os dados necessários
-        localidadesLoaderService.loadLocalidades();
-
-        // Verificar se uma cidade específica está associada ao estado correto
-        Cidade saoPauloCidade = cidadeRepository.findByCodigo(3550308); // Código IBGE de São Paulo
-        assertNotNull(saoPauloCidade);
-
-        // Verificar o estado da cidade de São Paulo
-        Estado estadoDaCidade = saoPauloCidade.getEstado();
-        assertNotNull(estadoDaCidade);
-        assertEquals(35, estadoDaCidade.getCodigo()); // Código do estado de São Paulo
-    }
-
-    @Test
-    public void testIntegridadeDasRelacoes() throws Exception {
-        // Carregar todas as localidades
-        localidadesLoaderService.loadLocalidades();
-
-        // Verificar a integridade das relações entre cidades e estados
-        List<Estado> estados = estadoRepository.findAll();
-        for (Estado estado : estados) {
-            List<Cidade> cidades = cidadeRepository.findByEstado(estado);
-            for (Cidade cidade : cidades) {
-                assertEquals(estado, cidade.getEstado());
-            }
-        }
-    }
-}
+ import static org.junit.jupiter.api.Assertions.*;
+ 
+ import java.util.List;
+ 
+ import org.junit.jupiter.api.BeforeEach;
+ import org.junit.jupiter.api.DisplayName;
+ import org.junit.jupiter.api.Test;
+ import org.springframework.beans.factory.annotation.Autowired;
+ import org.springframework.boot.test.context.SpringBootTest;
+ import org.springframework.transaction.annotation.Transactional;
+ 
+ import com.observatudo.backend.domain.model.Cidade;
+ import com.observatudo.backend.domain.model.Estado;
+ import com.observatudo.backend.domain.model.Pais;
+ import com.observatudo.backend.domain.repository.CidadeRepository;
+ import com.observatudo.backend.domain.repository.EstadoRepository;
+ import com.observatudo.backend.domain.repository.PaisRepository;
+ 
+ @SpringBootTest
+ @Transactional
+ public class LocalidadesLoaderServiceTest {
+ 
+     @Autowired
+     private LocalidadesLoaderService localidadesLoaderService;
+ 
+     @Autowired
+     private PaisRepository paisRepository;
+ 
+     @Autowired
+     private EstadoRepository estadoRepository;
+ 
+     @Autowired
+     private CidadeRepository cidadeRepository;
+ 
+     @BeforeEach
+     public void setup() {
+         // Limpar as tabelas antes de cada teste
+         paisRepository.deleteAll();
+         estadoRepository.deleteAll();
+         cidadeRepository.deleteAll();
+     }
+ 
+     @Test
+     @DisplayName("Verificar a contagem de países, estados e cidades após o carregamento")
+     public void testLoadLocalidadesCount() throws Exception {
+         localidadesLoaderService.loadLocalidades();
+         assertCounts(1, 27, 5570);
+     }
+ 
+     @Test
+     @DisplayName("Carregar e verificar a integridade dos dados de localidades")
+     public void testLoadLocalidades() throws Exception {
+         localidadesLoaderService.loadLocalidades();
+         assertPaisEstadoCidade();
+         assertCapitalDoBrasil("Brasília");
+     }
+ 
+     @Test
+     @DisplayName("Verificar associações entre país, estado e cidade")
+     public void testPaisEstadoCidadeAssociacao() throws Exception {
+         localidadesLoaderService.loadLocalidades();
+         assertPaisEstadoCidadeAssociacao(1058, 35, 3550308);
+     }
+ 
+     @Test
+     @DisplayName("Verificar integridade das relações entre estados e cidades")
+     public void testIntegridadeDasRelacoes() throws Exception {
+         localidadesLoaderService.loadLocalidades();
+         List<Estado> estados = estadoRepository.findAll();
+         for (Estado estado : estados) {
+             List<Cidade> cidades = cidadeRepository.findByEstado(estado);
+             for (Cidade cidade : cidades) {
+                 assertEquals(estado, cidade.getEstado(), "Cidade não está associada ao estado correto.");
+             }
+         }
+     }
+ 
+     // Métodos auxiliares para evitar redundâncias
+     private void assertCounts(long expectedPaises, long expectedEstados, long expectedCidades) {
+         assertEquals(expectedPaises, paisRepository.count(), "O número de países está incorreto.");
+         assertEquals(expectedEstados, estadoRepository.count(), "O número de estados está incorreto.");
+         assertEquals(expectedCidades, cidadeRepository.count(), "O número de cidades está incorreto.");
+     }
+ 
+     private void assertCapitalDoBrasil(String expectedCapitalName) {
+         Pais brasil = paisRepository.findByCodigo(1058);
+         assertNotNull(brasil, "Brasil não encontrado.");
+         assertNotNull(brasil.getCapital(), "Capital do Brasil não encontrada.");
+         assertEquals(expectedCapitalName, brasil.getCapital().getNome(), "Nome da capital do Brasil está incorreto.");
+     }
+ 
+     private void assertPaisEstadoCidade() {
+         List<Pais> paises = paisRepository.findAll();
+         assertNotNull(paises, "Lista de países não deve ser nula.");
+         assertFalse(paises.isEmpty(), "Lista de países está vazia.");
+ 
+         Pais brasil = paisRepository.findByCodigo(1058);
+         assertNotNull(brasil, "Brasil não encontrado.");
+         assertEquals("Brasil", brasil.getNome(), "Nome do Brasil está incorreto.");
+ 
+         List<Estado> estados = estadoRepository.findAll();
+         assertNotNull(estados, "Lista de estados não deve ser nula.");
+         assertFalse(estados.isEmpty(), "Lista de estados está vazia.");
+ 
+         Estado saoPaulo = estadoRepository.findByCodigo(35);
+         assertNotNull(saoPaulo, "Estado São Paulo não encontrado.");
+         assertEquals("São Paulo", saoPaulo.getNome(), "Nome do estado São Paulo está incorreto.");
+ 
+         List<Cidade> cidades = cidadeRepository.findAll();
+         assertNotNull(cidades, "Lista de cidades não deve ser nula.");
+         assertFalse(cidades.isEmpty(), "Lista de cidades está vazia.");
+ 
+         Cidade saoPauloCidade = cidadeRepository.findByCodigo(3550308);
+         assertNotNull(saoPauloCidade, "Cidade São Paulo não encontrada.");
+         assertEquals("São Paulo", saoPauloCidade.getNome(), "Nome da cidade São Paulo está incorreto.");
+         assertTrue(saoPauloCidade.isCapital(), "Cidade São Paulo não é marcada como capital.");
+     }
+ 
+     private void assertPaisEstadoCidadeAssociacao(int paisCodigo, int estadoCodigo, int cidadeCodigo) {
+         Pais pais = paisRepository.findByCodigo(paisCodigo);
+         assertNotNull(pais, "País não encontrado.");
+ 
+         List<Estado> estados = estadoRepository.findByPais(pais);
+         assertNotNull(estados, "Lista de estados não deve ser nula.");
+         assertEquals(27, estados.size(), "Número de estados associados ao país está incorreto.");
+ 
+         Estado estado = estadoRepository.findByCodigo(estadoCodigo);
+         assertNotNull(estado, "Estado não encontrado.");
+         List<Cidade> cidades = cidadeRepository.findByEstado(estado);
+         assertNotNull(cidades, "Lista de cidades não deve ser nula.");
+         assertFalse(cidades.isEmpty(), "Lista de cidades está vazia.");
+ 
+         Cidade cidade = cidadeRepository.findByCodigo(cidadeCodigo);
+         assertNotNull(cidade, "Cidade não encontrada.");
+         assertEquals(estado, cidade.getEstado(), "Cidade não está associada ao estado correto.");
+     }
+ }
+ 
