@@ -13,6 +13,7 @@ import com.observatudo.backend.domain.model.Cidade;
 import com.observatudo.backend.domain.model.Estado;
 import com.observatudo.backend.domain.repository.CidadeRepository;
 import com.observatudo.backend.domain.repository.EstadoRepository;
+import com.observatudo.backend.domain.repository.LocalidadeRepository;
 
 @Service
 public class LocalidadeService {
@@ -22,6 +23,9 @@ public class LocalidadeService {
 
     @Autowired
     private CidadeRepository cidadeRepository;
+
+    @Autowired
+    private LocalidadeRepository localidadeRepository;
 
     @Autowired
     private EntityMapper entityMapper;
@@ -37,6 +41,10 @@ public class LocalidadeService {
                     return new EstadoDTO(estado.getCodigo(), estado.getNome(), estado.getSigla(), cidadeDTOs);
                 })
                 .collect(Collectors.toList());
+    }
+
+    public boolean areLocalidadesLoaded() {
+        return localidadeRepository.count() > 0;
     }
 
 }
