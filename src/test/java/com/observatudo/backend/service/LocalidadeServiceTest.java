@@ -38,7 +38,7 @@ import com.observatudo.backend.loader.LocalidadesLoader;
 public class LocalidadeServiceTest {
 
     @Autowired
-    private LocalidadesLoader localidadesLoaderService;
+    private LocalidadesLoader localidadesLoader;
 
     @Autowired
     private LocalidadeService localidadeService;
@@ -57,7 +57,7 @@ public class LocalidadeServiceTest {
         paisRepository.deleteAll();
         estadoRepository.deleteAll();
         cidadeRepository.deleteAll();
-        localidadesLoaderService.loadLocalidades();
+        localidadesLoader.loadLocalidades();
     }
 
     @Test
