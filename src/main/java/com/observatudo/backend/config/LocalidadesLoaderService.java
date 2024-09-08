@@ -62,7 +62,7 @@ public class LocalidadesLoaderService {
         try (CSVReader reader = new CSVReader(new FileReader(resource.getFile()))) {
             List<String[]> rows = reader.readAll();
             rows.remove(0); // Pular cabeçalho
-
+            logger.info("Carregando paises ...");
             for (String[] row : rows) {
                 Integer codigo = Integer.parseInt(row[0]);
                 String nome = row[1];
@@ -87,7 +87,7 @@ public class LocalidadesLoaderService {
         try (CSVReader reader = new CSVReader(new FileReader(resource.getFile()))) {
             List<String[]> rows = reader.readAll();
             rows.remove(0); // Pular cabeçalho
-
+            logger.info("Carregando estados ...");
             for (String[] row : rows) {
                 Integer codigo = Integer.parseInt(row[0]);
                 String nome = row[1];
@@ -113,7 +113,7 @@ public class LocalidadesLoaderService {
         try (CSVReader reader = new CSVReader(new FileReader(resource.getFile()))) {
             List<String[]> rows = reader.readAll();
             rows.remove(0); // Remover o cabeçalho
-
+            logger.info("Carregando cidades ...");
             for (String[] row : rows) {
                 Integer codigoIbge = Integer.parseInt(row[0]);
                 String nome = row[1];
@@ -144,7 +144,7 @@ public class LocalidadesLoaderService {
 
     private void atualizarCapitais() {
         List<Estado> estados = estadoRepository.findAll();
-
+        logger.info("Atualizando as capitais ...");
         for (Estado estado : estados) {
             Cidade capitalEstado = cidadeRepository.findByEstadoAndCapital(estado, true);
 

@@ -10,24 +10,32 @@ para prestar atendimento de média complexidade, como vítimas de acidentes e pr
 
 package com.observatudo.backend.service.indicadores.impl;
 
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvException;
-import com.observatudo.backend.exception.ErrorHandler;
-import com.observatudo.backend.service.indicadores.BaseIndicadorLoaderStrategy;
-import org.springframework.stereotype.Component;
-
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.observatudo.backend.exception.ErrorHandler;
+import com.observatudo.backend.service.indicadores.BaseIndicadorLoaderStrategy;
+
 @Component
 public class CidadesSustentaveisLoader extends BaseIndicadorLoaderStrategy {
+
+    private static final Logger logger = LoggerFactory.getLogger(CidadesSustentaveisLoader.class);
 
     @Override
     public void loadIndicadores() {
         try {
             String path = "src/main/resources/data/cidades_sustentaveis/indicadores.csv";
             initializeFonte("Cidades Sustentáveis", "https://www.cidadessustentaveis.org.br/dados-abertos");
+            logger.info("Carregando indicadores do cidades sustentaveis...");
             try (CSVReader reader = new CSVReader(new FileReader(path))) {
                 reader.readNext(); // Pular o cabeçalho
                 List<String[]> lines = reader.readAll();
