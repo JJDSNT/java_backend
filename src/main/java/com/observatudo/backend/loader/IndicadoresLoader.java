@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.observatudo.backend.service.indicadores.IndicadorLoaderStrategy;
 import com.observatudo.backend.exception.ErrorHandler;
+import com.observatudo.backend.loader.indicadores.IndicadorLoaderStrategy;
 
 @Service
 public class IndicadoresLoader {
