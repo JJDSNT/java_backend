@@ -17,9 +17,15 @@ public class EixoService {
         return eixoRepository.save(eixo);
     }
 
-    public List<Eixo> createEixos(List<Eixo> eixos) {
-        return eixoRepository.saveAll(eixos);
+    public void createEixos(List<Eixo> eixos) {
+        for (Eixo eixo : eixos) {
+            if (!eixoRepository.existsById(eixo.getId())) {
+                eixoRepository.save(eixo);
+            }
+        }
     }
 
-    // Outros métodos de serviço para Eixo, se necessário
+    public boolean areEixosLoaded() {
+        return eixoRepository.count() > 0;
+    }
 }
