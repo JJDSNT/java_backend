@@ -57,6 +57,12 @@ Este sistema é uma aplicação para gerenciamento de indicadores relacionados a
    ```bash
    ./mvnw spring-boot:run
    ```
+4. **Acesse os endpoints**:  
+   ```bash
+   http://localhost:8080/swagger-ui.html
+   ```
+
+
 
 ## Diagrama de Classes (Domínio da API)
 ```mermaid
