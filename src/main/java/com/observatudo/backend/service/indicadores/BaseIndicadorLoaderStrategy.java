@@ -36,7 +36,7 @@ public abstract class BaseIndicadorLoaderStrategy implements IndicadorLoaderStra
             // Lógica para processar os indicadores com base nos dados da linha
             String codigoIbge = nextLine[0];
             String nomeIndicador = nextLine[1];
-            String data = nextLine[2];
+            //String data = nextLine[2];
             String valorIndicadorStr = nextLine[3];
 
             Cidade cidade = cidadeRepository.findByCodigo(Integer.parseInt(codigoIbge));
