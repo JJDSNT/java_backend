@@ -1,4 +1,4 @@
-package com.observatudo.backend.config;
+package com.observatudo.backend.loader;
 
 import java.io.InputStreamReader;
 import java.io.IOException;
@@ -25,9 +25,9 @@ import com.observatudo.backend.domain.repository.EstadoRepository;
 import com.observatudo.backend.domain.repository.PaisRepository;
 
 @Service
-public class LocalidadesLoaderService {
+public class LocalidadesLoader {
 
-    private static final Logger logger = LoggerFactory.getLogger(LocalidadesLoaderService.class);
+    private static final Logger logger = LoggerFactory.getLogger(LocalidadesLoader.class);
 
     private static final String PATH_PAISES = "data/ibge/pais.csv";
     private static final String PATH_ESTADOS = "data/ibge/estados.csv";
