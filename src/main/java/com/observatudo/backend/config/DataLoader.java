@@ -31,11 +31,11 @@ public class DataLoader {
             logger.info("Carregando as localidades ...");
             localidadesLoaderService.loadLocalidades(); // Chamando o método correto
            
-            logger.info("Carregando indicadores ...");
+            //logger.info("Carregando indicadores ...");
             // Escolha o cenário de indicadores que deseja carregar
-            indicadorService.loadIndicadores("cidades_sustentaveis");
-            // indicadorService.loadIndicadores("capag");
-            // indicadorService.loadIndicadores("dados_ficticios");
+            //indicadorService.loadIndicadores("cidades_sustentaveis");
+            //indicadorService.loadIndicadores("capag");
+            indicadorService.loadIndicadores("dados_ficticios");
             
             logger.info("Dados carregados com sucesso");
         } catch (Exception e) {
