@@ -1,11 +1,11 @@
-package com.observatudo.backend.service.indicadores.impl;
+package com.observatudo.backend.loader.indicadores.impl;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.observatudo.backend.service.indicadores.BaseIndicadorLoaderStrategy;
+import com.observatudo.backend.loader.indicadores.BaseIndicadorLoaderStrategy;
 
 @Component
 public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {

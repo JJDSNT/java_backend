@@ -1,4 +1,4 @@
-package com.observatudo.backend.service.indicadores;
+package com.observatudo.backend.loader.indicadores;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

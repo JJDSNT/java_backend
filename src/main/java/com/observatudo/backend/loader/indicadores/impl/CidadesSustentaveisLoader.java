@@ -8,7 +8,7 @@ para prestar atendimento de média complexidade, como vítimas de acidentes e pr
 ","0","2.021,00",
  */
 
-package com.observatudo.backend.service.indicadores.impl;
+package com.observatudo.backend.loader.indicadores.impl;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.observatudo.backend.exception.ErrorHandler;
-import com.observatudo.backend.service.indicadores.BaseIndicadorLoaderStrategy;
+import com.observatudo.backend.loader.indicadores.BaseIndicadorLoaderStrategy;
 
 @Component
 public class CidadesSustentaveisLoader extends BaseIndicadorLoaderStrategy {

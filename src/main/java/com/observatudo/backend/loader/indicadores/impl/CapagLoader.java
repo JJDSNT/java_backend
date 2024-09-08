@@ -13,7 +13,7 @@ Prefeitura Municipal de Abadia de Goiás - GO;5200050;GO;8583;0,127976496;A;0,90
 Prefeitura Municipal de Abadia dos Dourados - MG;3100104;MG;6972;0,165696027;A;0,90987563;B;0,774738727;A;B
 */
 
-package com.observatudo.backend.service.indicadores.impl;
+package com.observatudo.backend.loader.indicadores.impl;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -24,9 +24,9 @@ import org.slf4j.LoggerFactory;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 import com.observatudo.backend.exception.ErrorHandler;
-import org.springframework.stereotype.Component;
+import com.observatudo.backend.loader.indicadores.BaseIndicadorLoaderStrategy;
 
-import com.observatudo.backend.service.indicadores.BaseIndicadorLoaderStrategy;
+import org.springframework.stereotype.Component;
 
 @Component
 public class CapagLoader extends BaseIndicadorLoaderStrategy {
