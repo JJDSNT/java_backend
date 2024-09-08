@@ -3,18 +3,12 @@ package com.observatudo.backend.service.indicadores.impl;
 import java.util.Arrays;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.observatudo.backend.service.LocalidadeService;
 import com.observatudo.backend.service.indicadores.BaseIndicadorLoaderStrategy;
-import com.observatudo.backend.service.indicadores.IndicadorLoaderStrategy;
 
 @Component
 public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
-
-    @Autowired
-    private LocalidadeService localidadeService;
 
     @Override
     public void loadIndicadores() {
@@ -26,7 +20,13 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
         );
 
         for (String[] line : lines) {
-            localidadeService.processLine(line);
+            processLine(line);
         }
     }
+
+    @Override
+    public boolean supports(String tipo) {
+        return "dados_ficticios".equals(tipo);
+    }
+
 }
