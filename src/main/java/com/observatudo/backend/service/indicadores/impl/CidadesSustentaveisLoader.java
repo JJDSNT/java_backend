@@ -2,14 +2,8 @@ package com.observatudo.backend.service.indicadores.impl;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
-import com.observatudo.backend.domain.model.Fonte;
-import com.observatudo.backend.domain.repository.FonteRepository;
 import com.observatudo.backend.exception.ErrorHandler;
-import com.observatudo.backend.service.LocalidadeService;
 import com.observatudo.backend.service.indicadores.BaseIndicadorLoaderStrategy;
-import com.observatudo.backend.service.indicadores.IndicadorLoaderStrategy;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.FileReader;
@@ -19,9 +13,6 @@ import java.util.List;
 @Component
 public class CidadesSustentaveisLoader extends BaseIndicadorLoaderStrategy {
 
-    @Autowired
-    private LocalidadeService localidadeService;
-
     @Override
     public void loadIndicadores() {
         try {
@@ -30,12 +21,17 @@ public class CidadesSustentaveisLoader extends BaseIndicadorLoaderStrategy {
             try (CSVReader reader = new CSVReader(new FileReader(path))) {
                 reader.readNext(); // Pular o cabeçalho
                 List<String[]> lines = reader.readAll();
-                for (String[] nextLine : lines) {
-                    localidadeService.processLine(nextLine);
+                for (String[] line : lines) {
+                    processLine(line);
                 }
             }
         } catch (IOException | CsvException e) {
             ErrorHandler.logError("Erro ao carregar indicadores de cidades sustentáveis", e);
         }
+    }
+
+    @Override
+    public boolean supports(String tipo) {
+        return "cidades_sustentaveis".equals(tipo);
     }
 }
