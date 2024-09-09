@@ -4,11 +4,22 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+
+@Embeddable
 public class ValorIndicadorId implements Serializable {
 
-    private Integer fonteId; 
+     @Column(name = "fonteId")
+    private Integer fonteId;
+    
+    @Column(name = "indicador_id")
     private String codIndicador;
+
+    @Column(name = "localidade_id")
     private Integer localidadeId;
+
+    @Column(name = "data")
     private Date data;
 
     // Construtores
