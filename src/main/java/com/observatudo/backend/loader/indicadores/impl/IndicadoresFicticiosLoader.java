@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import com.observatudo.backend.domain.model.Cidade;
 import com.observatudo.backend.domain.model.Indicador;
+import com.observatudo.backend.domain.model.Localidade;
 import com.observatudo.backend.domain.model.ValorIndicador;
 import com.observatudo.backend.domain.model.ValorIndicadorId;
 import com.observatudo.backend.domain.repository.CidadeRepository;
@@ -25,9 +26,6 @@ import java.util.List;
 public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
 
     private static final Logger logger = LoggerFactory.getLogger(IndicadoresFicticiosLoader.class);
-
-    @Autowired
-    private CidadeRepository cidadeRepository;
 
     @Autowired
     private IndicadorRepository indicadorRepository;
@@ -117,19 +115,19 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
                 logger.info("Indicador já existe: {}", nomeIndicador);
             }
 
-            // Busca a cidade para o valorIndicador
-            Cidade cidade = cidadeRepository.findByCodigo(Integer.parseInt(codigoIbge));
-            if (cidade != null) {
+            // Busca a localidade para o valorIndicador
+            Localidade localidade = localidadeService.findByCodigo(Integer.parseInt(codigoIbge));
+            if (localidade != null) {
                 // Criação do ValorIndicador
                 ValorIndicadorId valorIndicadorId = new ValorIndicadorId(
                         indicador.getFonteId(), // Certifique-se de que esse valor está correto
                         indicador.getCodIndicador(),
-                        cidade.getCodigo(),
+                        localidade.getCodigo(),
                         data);
                 ValorIndicador valorIndicador = new ValorIndicador();
                 valorIndicador.setId(valorIndicadorId); // Definindo a chave composta
                 valorIndicador.setIndicador(indicador);
-                valorIndicador.setLocalidade(cidade);
+                valorIndicador.setLocalidade(localidade);
                 valorIndicador.setData(data); // Isso deve ser redundante, pois já faz parte do ID
                 valorIndicador.setValor(valor);
 
