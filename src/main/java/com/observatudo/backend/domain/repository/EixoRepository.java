@@ -9,5 +9,4 @@ import com.observatudo.backend.domain.model.Eixos;
 @Repository
 public interface EixoRepository extends JpaRepository<Eixo, Eixos> {
     // Métodos de consulta personalizados podem ser definidos aqui, se necessário
-    Eixo findById(Long id);
 }
