@@ -43,4 +43,5 @@ public class Cidade extends Localidade {
     public void setEstado(Estado estado) {
         this.estado = estado;
     }
+
 }
