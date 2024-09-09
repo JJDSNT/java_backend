@@ -100,10 +100,7 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
             Date data = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
             // Criação ou busca de Indicador
-            Indicador indicador = indicadorRepository.findByNome(nomeIndicador);
-            if (fonte.getId() == null) {
-                throw new RuntimeException("Fonte id está vazia");
-            }            
+            Indicador indicador = indicadorRepository.findByNome(nomeIndicador);           
             if (indicador == null) {
                 indicador = new Indicador();
                 indicador.setNome(nomeIndicador);
@@ -112,7 +109,6 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
                 indicador.setDono(dono);
                 indicador.setEmail(email);
                 indicador.setCodIndicador(gerarCodIndicador()); // Gera o código do indicador
-                logger.info("Indicador fonte id: {}", fonte.getId());
                 // Salva o Indicador
                 indicador = indicadorRepository.save(indicador);
                 logger.info("Indicador criado e salvo: {}", nomeIndicador);
@@ -120,22 +116,23 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
                 logger.info("Indicador já existe: {}", nomeIndicador);
             }
 
-            // // Busca a cidade para o valorIndicador
-            // Cidade cidade = cidadeRepository.findByCodigo(Integer.parseInt(codigoIbge));
-            // if (cidade != null) {
-            //     // Criação do ValorIndicador
-            //     ValorIndicador valorIndicador = new ValorIndicador();
-            //     valorIndicador.setIndicador(indicador);
-            //     valorIndicador.setLocalidade(cidade);
-            //     valorIndicador.setData(data);
-            //     valorIndicador.setValor(valor);
+            // Busca a cidade para o valorIndicador
+            Cidade cidade = cidadeRepository.findByCodigo(Integer.parseInt(codigoIbge));
+            logger.info("Cidade carregada: {}", cidade.getCodigo());
+            if (cidade != null) {
+                // Criação do ValorIndicador
+                ValorIndicador valorIndicador = new ValorIndicador();
+                valorIndicador.setIndicador(indicador);
+                valorIndicador.setLocalidade(cidade);
+                valorIndicador.setData(data);
+                valorIndicador.setValor(valor);
 
-            //     // Salva o ValorIndicador
-            //     valorIndicadorRepository.save(valorIndicador);
-            //     logger.info("ValorIndicador salvo para o indicador: {}", nomeIndicador);
-            // } else {
-            //     logger.error("Localidade não encontrada para o código IBGE: {}", codigoIbge);
-            // }
+                // Salva o ValorIndicador
+                valorIndicadorRepository.save(valorIndicador);
+                logger.info("ValorIndicador salvo para o indicador: {}", nomeIndicador);
+            } else {
+                logger.error("Localidade não encontrada para o código IBGE: {}", codigoIbge);
+            }
         } catch (Exception e) {
             logger.error("Erro ao processar linha: {}", e.getMessage(), e);
         }
