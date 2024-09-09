@@ -9,18 +9,27 @@ public abstract class BaseIndicadorLoaderStrategy implements IndicadorLoaderStra
     @Autowired
     private FonteRepository fonteRepository;
 
-    protected Fonte fonte;
+    public Fonte fonte;
 
     // Método comum para inicializar a fonte
-    protected void initializeFonte(String nomeFonte, String urlFonte) {
-        fonte = fonteRepository.findByNome(nomeFonte);
-        if (fonte == null) {
-            fonte = new Fonte();
-            fonte.setNome(nomeFonte);
-            fonte.setUrl(urlFonte);
-            fonteRepository.save(fonte);
+    public void initializeFonte(String nome, String url) {
+        try {
+            Fonte fonteExistente = fonteRepository.findByNome(nome);
+            if (fonteExistente == null) {
+                Fonte novaFonte = new Fonte();
+                novaFonte.setNome(nome);
+                novaFonte.setUrl(url);
+                this.fonte = fonteRepository.save(novaFonte);  // Salva e retorna com ID
+            } else {
+                this.fonte = fonteExistente;
+            }
+        } catch (Exception e) {
+            // Lida com a exceção de forma adequada
+            throw new RuntimeException("Erro ao inicializar a fonte: " + nome, e);
         }
     }
+    
+    
     
     // Método abstrato que as subclasses devem implementar para processar o carregamento
     public abstract void loadIndicadores();

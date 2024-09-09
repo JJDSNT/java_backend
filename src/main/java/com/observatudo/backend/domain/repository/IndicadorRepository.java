@@ -7,5 +7,7 @@ import com.observatudo.backend.domain.model.Indicador;
 
 @Repository
 public interface IndicadorRepository extends JpaRepository<Indicador, Integer> {
+
+    Indicador findByNome(String nomeIndicador);
     // Métodos de consulta personalizados podem ser definidos aqui, se necessário
 }

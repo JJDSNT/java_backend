@@ -2,50 +2,44 @@ package com.observatudo.backend.domain.model;
 
 import jakarta.persistence.*;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
-@Table(name = "valor_indicador", uniqueConstraints = {@UniqueConstraint(columnNames = {"codigoLocalidade", "indicadorId", "data"})})
+@Table(name = "valor_indicador")
 public class ValorIndicador {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
-    private Long id;
+    @EmbeddedId
+    private ValorIndicadorId id;
 
+    @MapsId("indicador")
     @ManyToOne
-    @JoinColumn(name = "indicadorId", nullable = false)
+    @JoinColumns({
+        @JoinColumn(name = "fonteId", referencedColumnName = "fonte_id", insertable = false, updatable = false),
+        @JoinColumn(name = "indicador_id", referencedColumnName = "cod_indicador", insertable = false, updatable = false)
+    })
     private Indicador indicador;
 
+    @MapsId("localidadeId")
     @ManyToOne
-    @JoinColumn(name = "codigoLocalidade", nullable = false)
+    @JoinColumn(name = "localidade_id", referencedColumnName = "codigo", insertable = false, updatable = false)
     private Localidade localidade;
 
-    @Column(name = "data", nullable = false)
-    @Temporal(TemporalType.DATE)
+    @Column(name = "data", insertable=false, updatable=false)
     private Date data;
 
-    @Column(name = "valor", nullable = false)
-    private Double valor;
+    @Column(name = "valor")
+    private double valor;
 
+    @Column(name = "justificativa")
     private String justificativa;
 
-    // Construtor padrão
-    public ValorIndicador() {}
+    // Constructors, Getters, and Setters
 
-    // Construtor com parâmetros
-    public ValorIndicador(Indicador indicador, Localidade localidade, Date data, Double valor) {
-        this.indicador = indicador;
-        this.localidade = localidade;
-        this.data = data;
-        this.valor = valor;
-    }
-
-    // Getters e Setters
-    public Long getId() {
+    public ValorIndicadorId getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(ValorIndicadorId id) {
         this.id = id;
     }
 
@@ -73,25 +67,12 @@ public class ValorIndicador {
         this.data = data;
     }
 
-    public Double getValor() {
+    public double getValor() {
         return valor;
     }
 
-    public void setValor(Double valor) {
+    public void setValor(double valor) {
         this.valor = valor;
-    }
-
-    // Métodos adicionais
-    public Double getValorIndicador() {
-        return valor;
-    }
-
-    public Localidade getLocalidadeIndicador() {
-        return localidade;
-    }
-
-    public Indicador getIndicadorValor() {
-        return indicador;
     }
 
     public String getJustificativa() {
@@ -99,7 +80,20 @@ public class ValorIndicador {
     }
 
     public void setJustificativa(String justificativa) {
-        this.justificativa = justificativa; // Implementação do método
+        this.justificativa = justificativa;
     }
 
+    // Equals and HashCode
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ValorIndicador that = (ValorIndicador) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

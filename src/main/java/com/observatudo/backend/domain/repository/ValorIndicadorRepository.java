@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.observatudo.backend.domain.model.ValorIndicador;
 
 @Repository
-public interface ValorIndicadorRepository extends JpaRepository<ValorIndicador, Integer> {
+public interface ValorIndicadorRepository extends JpaRepository<ValorIndicador, Long> {
     // Métodos de consulta personalizados podem ser definidos aqui, se necessário
 }

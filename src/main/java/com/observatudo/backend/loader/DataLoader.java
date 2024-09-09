@@ -1,7 +1,7 @@
 package com.observatudo.backend.loader;
 
 import org.springframework.stereotype.Component;
-
+import org.springframework.transaction.annotation.Transactional;
 import com.observatudo.backend.service.LocalidadeService;
 
 import javax.annotation.PostConstruct;
@@ -23,15 +23,23 @@ public class DataLoader {
     }
 
     @PostConstruct
+    @Transactional
     public void loadData() {
         try {
             logger.info("Iniciando o carregamento dos dados...");
 
+            // Carrega localidades
             if (!localidadeService.areLocalidadesLoaded()) {
                 logger.info("Carregando localidades...");
                 localidadesLoader.loadLocalidades();
             } else {
                 logger.info("Localidades já carregadas.");
+            }
+
+            // Espera até que todas as localidades estejam carregadas
+            while (!localidadeService.areLocalidadesLoaded()) {
+                logger.info("Aguardando o carregamento completo das localidades...");
+                Thread.sleep(1000); // Aguardar 1 segundo antes de verificar novamente
             }
 
             logger.info("Carregando indicadores...");
