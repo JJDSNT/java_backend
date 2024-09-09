@@ -17,15 +17,22 @@ package com.observatudo.backend.loader.indicadores.impl;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+import com.observatudo.backend.domain.model.Cidade;
+import com.observatudo.backend.domain.model.Indicador;
+import com.observatudo.backend.domain.model.ValorIndicador;
+import com.observatudo.backend.domain.repository.CidadeRepository;
 import com.observatudo.backend.exception.ErrorHandler;
 import com.observatudo.backend.loader.indicadores.BaseIndicadorLoaderStrategy;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -39,9 +46,12 @@ public class CapagLoader extends BaseIndicadorLoaderStrategy {
 
     private static final Logger logger = LoggerFactory.getLogger(CapagLoader.class);
 
+    @Autowired
+    private CidadeRepository cidadeRepository;
+
     @Override
     public void loadIndicadores() {
-        logger.info("Carregando indicadores do cidades sustentaveis...");
+        logger.info("Carregando indicadores CAPAG...");
         initializeFonte(NOME_FONTE, URL_FONTE);
 
         // Processar arquivo de estados
@@ -80,7 +90,7 @@ public class CapagLoader extends BaseIndicadorLoaderStrategy {
             String classificacao = line[7];
 
             // Processar linha conforme necessário
-            processLine(new String[]{uf, indicador1, nota1, indicador2, nota2, indicador3, nota3, classificacao});
+            processLine(new String[] { uf, indicador1, nota1, indicador2, nota2, indicador3, nota3, classificacao });
         }
     }
 
@@ -101,12 +111,80 @@ public class CapagLoader extends BaseIndicadorLoaderStrategy {
             String classificacao = line[10];
 
             // Processar linha conforme necessário
-            processLine(new String[]{instituicao, codIbge, uf, populacao, indicador1, nota1, indicador2, nota2, indicador3, nota3, classificacao});
+            processLine(new String[] { instituicao, codIbge, uf, populacao, indicador1, nota1, indicador2, nota2,
+                    indicador3, nota3, classificacao });
         }
     }
 
     @Override
     public boolean supports(String tipo) {
         return "capag".equals(tipo);
+    }
+
+    @SuppressWarnings("unused")
+    private void processLine(String[] line) {
+        try {
+            if (line.length == 8) { // Formato de estados
+                String uf = line[0];
+                String indicador1 = line[1];
+                String nota1 = line[2];
+                String indicador2 = line[3];
+                String nota2 = line[4];
+                String indicador3 = line[5];
+                String nota3 = line[6];
+                String classificacao = line[7];
+
+                // Exemplo de como processar e salvar indicadores
+                Indicador indicador = new Indicador();
+                indicador.setNome("Indicador CAPAG"); // Nome do indicador
+                indicador.setDescricao(
+                        "O Indicador CAPAG (Capacidade de Pagamento) avalia a capacidade financeira de um ente público para cumprir suas obrigações financeiras. Ele mede a saúde fiscal do ente, considerando endividamento, capacidade de arrecadação e gestão de receitas e despesas. Utilizado para verificar a capacidade de crédito e gestão financeira do ente público."); // Descrição
+                indicador.setFonte(fonte); // Fonte dos dados
+
+                ValorIndicador valorIndicador = new ValorIndicador();
+                valorIndicador.setIndicador(indicador);
+                valorIndicador.setLocalidade(null); // Para estados, ajuste conforme necessário
+                valorIndicador.setData(new SimpleDateFormat("dd/MM/yyyy").parse("03/10/2019")); // Exemplo de data
+                valorIndicador.setValor(Double.parseDouble(indicador1.replace(',', '.'))); // Ajuste para o formato de
+                                                                                           // número
+
+                // Salvar o valorIndicador no banco de dados se necessário
+            } else if (line.length == 11) { // Formato de municípios
+                String instituicao = line[0];
+                String codIbge = line[1];
+                String uf = line[2];
+                String populacao = line[3];
+                String indicador1 = line[4];
+                String nota1 = line[5];
+                String indicador2 = line[6];
+                String nota2 = line[7];
+                String indicador3 = line[8];
+                String nota3 = line[9];
+                String classificacao = line[10];
+
+                Cidade cidade = cidadeRepository.findByCodigo(Integer.parseInt(codIbge));
+                if (cidade != null) {
+                    Indicador indicador = new Indicador();
+                    indicador.setNome("Indicador CAPAG"); // Definir o nome e outras propriedades conforme necessário
+                    indicador.setDescricao("Descrição para indicador " + classificacao); // Ajustar conforme necessário
+                    indicador.setFonte(fonte);
+
+                    ValorIndicador valorIndicador = new ValorIndicador();
+                    valorIndicador.setIndicador(indicador);
+                    valorIndicador.setLocalidade(cidade);
+                    valorIndicador.setData(new SimpleDateFormat("dd/MM/yyyy").parse("03/10/2019")); // Exemplo de data
+                    valorIndicador.setValor(Double.parseDouble(indicador1.replace(',', '.'))); // Ajuste para o formato
+                                                                                               // de número
+
+                    // Salvar o valorIndicador no banco de dados se necessário
+                } else {
+                    logger.warn("Cidade não encontrada para o código IBGE: " + codIbge);
+                }
+            }
+        } catch (ParseException e) {
+            logger.error("Erro ao processar data no formato: " + e.getMessage(), e);
+        } catch (NumberFormatException e) {
+            logger.error("Erro ao converter número: " + e.getMessage(), e);
+        }
     }
 }

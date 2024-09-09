@@ -27,6 +27,8 @@ public class ValorIndicador {
     @Column(name = "valor", nullable = false)
     private Double valor;
 
+    private String justificativa;
+
     // Construtor padrão
     public ValorIndicador() {}
 
@@ -90,6 +92,14 @@ public class ValorIndicador {
 
     public Indicador getIndicadorValor() {
         return indicador;
+    }
+
+    public String getJustificativa() {
+        return justificativa;
+    }
+
+    public void setJustificativa(String justificativa) {
+        this.justificativa = justificativa; // Implementação do método
     }
 
 }
