@@ -44,7 +44,7 @@ public class LocalidadeService {
     }
 
     public boolean areLocalidadesLoaded() {
-        return localidadeRepository.count() > 0;
+        return localidadeRepository.count() > 5570;
     }
 
 }
