@@ -11,21 +11,21 @@ public class ValorIndicador {
     @EmbeddedId
     private ValorIndicadorId id;
 
-    @ManyToOne
-    @JoinColumn(name = "indicador_id", insertable = false, updatable = false)
-    private Indicador indicador;
+    // @ManyToOne
+    // @JoinColumn(name = "indicador_id", insertable = false, updatable = false)
+    // private Indicador indicador;
 
     @ManyToOne
     @JoinColumn(name = "localidade_id", insertable = false, updatable = false)
     private Localidade localidade;
 
-    // @MapsId("indicador")
-    // @ManyToOne
-    // @JoinColumns({
-    //     @JoinColumn(name = "fonteId", referencedColumnName = "fonte_id", insertable = false, updatable = false),
-    //     @JoinColumn(name = "indicador_id", referencedColumnName = "cod_indicador", insertable = false, updatable = false)
-    // })
-    // private Indicador indicador;
+    @MapsId("indicador")
+    @ManyToOne
+    @JoinColumns({
+        @JoinColumn(name = "fonteId", referencedColumnName = "fonte_id", insertable = false, updatable = false),
+        @JoinColumn(name = "indicador_id", referencedColumnName = "cod_indicador", insertable = false, updatable = false)
+    })
+    private Indicador indicador;
 
     // @MapsId("localidadeId")
     // @ManyToOne
