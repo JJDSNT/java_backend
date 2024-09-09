@@ -11,6 +11,7 @@ import com.observatudo.backend.domain.dto.EstadoDTO;
 import com.observatudo.backend.domain.mapper.EntityMapper;
 import com.observatudo.backend.domain.model.Cidade;
 import com.observatudo.backend.domain.model.Estado;
+import com.observatudo.backend.domain.model.Localidade;
 import com.observatudo.backend.domain.repository.CidadeRepository;
 import com.observatudo.backend.domain.repository.EstadoRepository;
 import com.observatudo.backend.domain.repository.LocalidadeRepository;
@@ -45,6 +46,10 @@ public class LocalidadeService {
 
     public boolean areLocalidadesLoaded() {
         return localidadeRepository.count() > 5570;
+    }
+
+    public Localidade findByCodigo(int codigo) {
+        return localidadeRepository.findByCodigo(codigo);
     }
 
 }
