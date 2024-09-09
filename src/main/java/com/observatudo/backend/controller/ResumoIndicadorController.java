@@ -14,9 +14,9 @@ public class ResumoIndicadorController {
     @Autowired
     private ResumoIndicadorService resumoIndicadorService;
 
-    @GetMapping("/{cidadeId}")
-    public ResponseEntity<ResumoIndicadorDTO> obterResumoIndicadores(@PathVariable Long cidadeId) {
-        ResumoIndicadorDTO resumo = resumoIndicadorService.obterResumoIndicadores(cidadeId);
+    @GetMapping("/{codigoLocalidade}")
+    public ResponseEntity<ResumoIndicadorDTO> obterResumoIndicadores(@PathVariable Integer codigoLocalidade) {
+        ResumoIndicadorDTO resumo = resumoIndicadorService.obterResumoIndicadores(codigoLocalidade);
         return new ResponseEntity<>(resumo, HttpStatus.OK);
     }
 }
