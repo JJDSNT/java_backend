@@ -16,19 +16,24 @@ public class EixoPadrao {
     @JoinColumn(name = "eixo_id", nullable = false)
     private Eixo eixo;
 
-    // @ManyToMany
-    // @JoinTable(name = "eixo_padrao_indicador", joinColumns = @JoinColumn(name = "eixo_padrao_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "indicador_id", referencedColumnName = "id"))
-    // private List<Indicador> indicadores;
-
-    @ManyToMany(mappedBy = "indicadores")
-    private List<EixoPadrao> eixoPadraoList;
+    @ManyToMany
+    @JoinTable(
+        name = "eixo_padrao_indicador", 
+        joinColumns = @JoinColumn(name = "eixo_padrao_id", referencedColumnName = "id"), 
+        inverseJoinColumns = {
+            @JoinColumn(name = "indicador_fonte_id", referencedColumnName = "fonte_id"),
+            @JoinColumn(name = "indicador_cod_indicador", referencedColumnName = "cod_indicador")
+        }
+    )
+    private List<Indicador> indicadores;
+    
 
     // Construtores
-    public EixoPadrao() {
-    }
+    public EixoPadrao() {}
 
-    public EixoPadrao(Eixo eixo) {
+    public EixoPadrao(Eixo eixo, List<Indicador> indicadores) {
         this.eixo = eixo;
+        this.indicadores = indicadores;
     }
 
     // Getters e Setters
@@ -48,11 +53,11 @@ public class EixoPadrao {
         this.eixo = eixo;
     }
 
-    // public List<Indicador> getIndicadores() {
-    //     return indicadores;
-    // }
+    public List<Indicador> getIndicadores() {
+        return indicadores;
+    }
 
-    // public void setIndicadores(List<Indicador> indicadores) {
-    //     this.indicadores = indicadores;
-    // }
+    public void setIndicadores(List<Indicador> indicadores) {
+        this.indicadores = indicadores;
+    }
 }

@@ -20,16 +20,19 @@ public class EixoUsuario {
     @JoinColumn(name = "eixo_id", nullable = false)
     private Eixo eixo;
 
-    // @ManyToMany
-    // @JoinTable(
-    //     name = "eixo_usuario_indicador",
-    //     joinColumns = @JoinColumn(name = "eixo_usuario_id", referencedColumnName = "id"),
-    //     inverseJoinColumns = @JoinColumn(name = "indicador_id", referencedColumnName = "id")
-    // )
-    // private List<Indicador> indicadores;
+    @ManyToMany
+    @JoinTable(
+        name = "eixo_usuario_indicador",
+        joinColumns = @JoinColumn(name = "eixo_usuario_id", referencedColumnName = "id"),
+        inverseJoinColumns = {
+            @JoinColumn(name = "indicador_fonte_id", referencedColumnName = "fonte_id"),
+            @JoinColumn(name = "indicador_cod_indicador", referencedColumnName = "cod_indicador")
+        }
+    )
+    private List<Indicador> indicadores;
 
-    @ManyToMany(mappedBy = "indicadores")
-    private List<EixoUsuario> eixoUsuarios;
+    // @ManyToMany(mappedBy = "indicadores")
+    // private List<EixoUsuario> eixoUsuarios;
     
 
     // Construtores
@@ -65,12 +68,12 @@ public class EixoUsuario {
         this.eixo = eixo;
     }
 
-    // public List<Indicador> getIndicadores() {
-    //     return indicadores;
-    // }
+    public List<Indicador> getIndicadores() {
+        return indicadores;
+    }
 
-    // public void setIndicadores(List<Indicador> indicadores) {
-    //     this.indicadores = indicadores;
-    // }
+    public void setIndicadores(List<Indicador> indicadores) {
+        this.indicadores = indicadores;
+    }
 }
 
