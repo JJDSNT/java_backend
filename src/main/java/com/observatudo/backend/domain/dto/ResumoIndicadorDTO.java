@@ -1,18 +1,22 @@
 package com.observatudo.backend.domain.dto;
 
+import java.util.List;
 import java.util.Map;
+
+import com.observatudo.backend.domain.model.Eixo;
 
 public class ResumoIndicadorDTO {
 
-    private Map<String, IndicadorAgrupadoDTO> indicadoresPorEixo;
+    private Map<Eixo, List<IndicadorDTO>> indicadoresPorEixo;
 
-    // Getters e Setters
-
-    public Map<String, IndicadorAgrupadoDTO> getIndicadoresPorEixo() {
+    public Map<Eixo, List<IndicadorDTO>> getIndicadoresPorEixo() {
         return indicadoresPorEixo;
     }
 
-    public void setIndicadoresPorEixo(Map<String, IndicadorAgrupadoDTO> indicadoresPorEixo) {
+    public void setIndicadoresPorEixo(Map<Eixo, List<IndicadorDTO>> indicadoresPorEixo) {
         this.indicadoresPorEixo = indicadoresPorEixo;
     }
 }
+
+
+

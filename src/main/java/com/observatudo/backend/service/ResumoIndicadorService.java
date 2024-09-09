@@ -1,13 +1,18 @@
 package com.observatudo.backend.service;
 
 import com.observatudo.backend.domain.dto.ResumoIndicadorDTO;
+import com.observatudo.backend.domain.model.Cidade;
+import com.observatudo.backend.domain.model.Eixo;
+import com.observatudo.backend.domain.model.Estado;
 import com.observatudo.backend.domain.model.Indicador;
 import com.observatudo.backend.domain.model.Localidade;
+import com.observatudo.backend.domain.model.Pais;
 import com.observatudo.backend.domain.repository.EixoRepository;
 import com.observatudo.backend.domain.repository.IndicadorRepository;
 import com.observatudo.backend.domain.repository.LocalidadeRepository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,42 +26,25 @@ public class ResumoIndicadorService {
     private IndicadorRepository indicadorRepository;
 
     @Autowired
-    private LocalidadeRepository localidadeRepository;
-
-    @Autowired
     private EixoRepository eixoRepository;
 
-    public ResumoIndicadorDTO obterResumoIndicadores(Long cidadeId) {
-        // Obtém a cidade
-        Localidade cidade = localidadeRepository.findById(cidadeId)
-                                               .orElseThrow(() -> new RuntimeException("Cidade não encontrada"));
-
-        // Obtém o estado e o país relacionados à cidade
-        Localidade estado = cidade.getEstado();
-        Localidade pais = estado.getPais();
-
-        // Obtém indicadores relacionados a cidade, estado e país
-        List<Indicador> indicadoresCidade = indicadorRepository.findByLocalidade(cidade);
-        List<Indicador> indicadoresEstado = indicadorRepository.findByLocalidade(estado);
-        List<Indicador> indicadoresPais = indicadorRepository.findByLocalidade(pais);
+    public ResumoIndicadorDTO obterResumoIndicadores(Integer codigoLocalidade) {
+        // Obtém os indicadores para a localidade especificada
+        List<Indicador> indicadores = indicadorRepository.findByLocalidadeCodigo(codigoLocalidade);
 
         // Agrupa indicadores por eixo
-        Map<String, IndicadorAgrupadoDTO> agrupadosPorEixo = new HashMap<>();
+        Map<Eixo, List<IndicadorDTO>> agrupadosPorEixo = new HashMap<>();
 
-        List<Indicador> todosIndicadores = new ArrayList<>();
-        todosIndicadores.addAll(indicadoresCidade);
-        todosIndicadores.addAll(indicadoresEstado);
-        todosIndicadores.addAll(indicadoresPais);
-
-        for (Indicador indicador : todosIndicadores) {
-            String eixo = indicador.getEixo().getNome(); // Supondo que `Indicador` tem um método para obter o eixo
-            IndicadorAgrupadoDTO agrupado = agrupadosPorEixo.computeIfAbsent(eixo, k -> new IndicadorAgrupadoDTO(eixo, new ArrayList<>()));
-            agrupado.getIndicadores().add(new IndicadorDTO(
-                indicador.getFonte().getNome(), // Substitua conforme necessário
-                indicador.getCodIndicador(),
-                indicador.getNome(),
-                indicador.getDescricao()
-            ));
+        for (Indicador indicador : indicadores) {
+            for (Eixo eixo : indicador.getEixos()) {
+                agrupadosPorEixo.computeIfAbsent(eixo, k -> new ArrayList<>())
+                    .add(new IndicadorDTO(
+                        indicador.getFonte().getNome(),
+                        indicador.getCodIndicador(),
+                        indicador.getNome(),
+                        indicador.getDescricao()
+                    ));
+            }
         }
 
         ResumoIndicadorDTO resumo = new ResumoIndicadorDTO();
@@ -65,4 +53,3 @@ public class ResumoIndicadorService {
         return resumo;
     }
 }
-
