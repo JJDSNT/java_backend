@@ -65,12 +65,12 @@ public class EixoUsuario {
         this.eixo = eixo;
     }
 
-    public List<Indicador> getIndicadores() {
-        return indicadores;
-    }
+    // public List<Indicador> getIndicadores() {
+    //     return indicadores;
+    // }
 
-    public void setIndicadores(List<Indicador> indicadores) {
-        this.indicadores = indicadores;
-    }
+    // public void setIndicadores(List<Indicador> indicadores) {
+    //     this.indicadores = indicadores;
+    // }
 }
 

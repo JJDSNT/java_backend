@@ -1,7 +1,7 @@
 package com.observatudo.backend.domain.model;
 
 import jakarta.persistence.*;
-import java.util.List;
+//import java.util.List;
 
 @Entity
 @Table(name = "eixo")
@@ -95,48 +95,49 @@ public class Eixo {
         this.cor = cor;
     }
 
-    public List<Indicador> getIndicadores() {
-        return indicadores;
-    }
+    // public List<Indicador> getIndicadores() {
+    //     return indicadores;
+    // }
 
-    public void setIndicadores(List<Indicador> indicadores) {
-        this.indicadores = indicadores;
-    }
+    // public void setIndicadores(List<Indicador> indicadores) {
+    //     this.indicadores = indicadores;
+    // }
 
-    public List<EixoPadrao> getEixoPadrao() {
-        return eixoPadrao;
-    }
+    // public List<EixoPadrao> getEixoPadrao() {
+    //     return eixoPadrao;
+    // }
 
-    public void setEixoPadrao(List<EixoPadrao> eixoPadrao) {
-        this.eixoPadrao = eixoPadrao;
-    }
+    // public void setEixoPadrao(List<EixoPadrao> eixoPadrao) {
+    //     this.eixoPadrao = eixoPadrao;
+    // }
 
-    public List<EixoUsuario> getEixosUsuario() {
-        return eixosUsuario;
-    }
+    // public List<EixoUsuario> getEixosUsuario() {
+    //     return eixosUsuario;
+    // }
 
-    public void setEixosUsuario(List<EixoUsuario> eixosUsuario) {
-        this.eixosUsuario = eixosUsuario;
-    }
+    // public void setEixosUsuario(List<EixoUsuario> eixosUsuario) {
+    //     this.eixosUsuario = eixosUsuario;
+    // }
 
-    public List<Indicador> getIndicadorPadrao() {
-        return indicadorPadrao;
-    }
+    // public List<Indicador> getIndicadorPadrao() {
+    //     return indicadorPadrao;
+    // }
 
-    public void setIndicadorPadrao(List<Indicador> indicadorPadrao) {
-        this.indicadorPadrao = indicadorPadrao;
-    }
+    // public void setIndicadorPadrao(List<Indicador> indicadorPadrao) {
+    //     this.indicadorPadrao = indicadorPadrao;
+    // }
 
-    public List<Indicador> getIndicadoresUsuario() {
-        return indicadoresUsuario;
-    }
+    // public List<Indicador> getIndicadoresUsuario() {
+    //     return indicadoresUsuario;
+    // }
 
-    public void setIndicadoresUsuario(List<Indicador> indicadoresUsuario) {
-        this.indicadoresUsuario = indicadoresUsuario;
-    }
+    // public void setIndicadoresUsuario(List<Indicador> indicadoresUsuario) {
+    //     this.indicadoresUsuario = indicadoresUsuario;
+    // }
 
-    // Método para obter todos os indicadores
-    public List<Indicador> getTodosIndicadores() {
-        return this.indicadorPadrao;
-    }
+    // // Método para obter todos os indicadores
+    // public List<Indicador> getTodosIndicadores() {
+    //     return this.indicadorPadrao;
+    // }
+
 }
