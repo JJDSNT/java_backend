@@ -20,13 +20,17 @@ public class EixoUsuario {
     @JoinColumn(name = "eixo_id", nullable = false)
     private Eixo eixo;
 
-    @ManyToMany
-    @JoinTable(
-        name = "eixo_usuario_indicador",
-        joinColumns = @JoinColumn(name = "eixo_usuario_id", referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn(name = "indicador_id", referencedColumnName = "id")
-    )
-    private List<Indicador> indicadores;
+    // @ManyToMany
+    // @JoinTable(
+    //     name = "eixo_usuario_indicador",
+    //     joinColumns = @JoinColumn(name = "eixo_usuario_id", referencedColumnName = "id"),
+    //     inverseJoinColumns = @JoinColumn(name = "indicador_id", referencedColumnName = "id")
+    // )
+    // private List<Indicador> indicadores;
+
+    @ManyToMany(mappedBy = "indicadores")
+    private List<EixoUsuario> eixoUsuarios;
+    
 
     // Construtores
     public EixoUsuario() {}

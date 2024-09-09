@@ -24,38 +24,27 @@ public class Eixo {
     @Column(name = "cor", nullable = false)
     private String cor;
 
-    @ManyToMany
-    @JoinTable(
-        name = "indicador_eixo",
-        joinColumns = @JoinColumn(name = "eixo_id"),
-        inverseJoinColumns = @JoinColumn(name = "indicador_id")
-    )
-    private List<Indicador> indicadores;
+    // @ManyToMany
+    // @JoinTable(name = "indicador_eixo", joinColumns = @JoinColumn(name = "eixo_id"), inverseJoinColumns = @JoinColumn(name = "indicador_id"))
+    // private List<Indicador> indicadores;
 
-    @OneToMany(mappedBy = "eixo", cascade = CascadeType.ALL)
-    private List<EixoPadrao> eixoPadrao;
+    // @OneToMany(mappedBy = "eixo", cascade = CascadeType.ALL)
+    // private List<EixoPadrao> eixoPadrao;
 
-    @OneToMany(mappedBy = "eixo", cascade = CascadeType.ALL)
-    private List<EixoUsuario> eixosUsuario;
+    // @OneToMany(mappedBy = "eixo", cascade = CascadeType.ALL)
+    // private List<EixoUsuario> eixosUsuario;
 
-    @ManyToMany
-    @JoinTable(
-        name = "indicador_eixo_padrao",
-        joinColumns = @JoinColumn(name = "eixo_id"),
-        inverseJoinColumns = @JoinColumn(name = "indicador_id")
-    )
-    private List<Indicador> indicadorPadrao;
+    // @ManyToMany
+    // @JoinTable(name = "indicador_eixo_padrao", joinColumns = @JoinColumn(name = "eixo_id"), inverseJoinColumns = @JoinColumn(name = "indicador_id"))
+    // private List<Indicador> indicadorPadrao;
 
-    @ManyToMany
-    @JoinTable(
-        name = "indicador_eixo_usuario",
-        joinColumns = @JoinColumn(name = "eixo_id"),
-        inverseJoinColumns = @JoinColumn(name = "indicador_id")
-    )
-    private List<Indicador> indicadoresUsuario;
+    // @ManyToMany
+    // @JoinTable(name = "indicador_eixo_usuario", joinColumns = @JoinColumn(name = "eixo_id"), inverseJoinColumns = @JoinColumn(name = "indicador_id"))
+    // private List<Indicador> indicadoresUsuario;
 
     // Construtores
-    public Eixo() {}
+    public Eixo() {
+    }
 
     public Eixo(Eixos id, String nome, String nomeLegivel, String icon, String cor) {
         this.id = id;
@@ -151,4 +140,3 @@ public class Eixo {
         return this.indicadorPadrao;
     }
 }
-
