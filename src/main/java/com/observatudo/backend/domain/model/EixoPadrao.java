@@ -17,19 +17,25 @@ public class EixoPadrao extends EixoBaseImpl {
     private Eixo eixo;
 
     @ManyToMany
-    @JoinTable(
-        name = "eixo_padrao_indicador", 
-        joinColumns = @JoinColumn(name = "eixo_padrao_id", referencedColumnName = "id"), 
-        inverseJoinColumns = {
+    @JoinTable(name = "eixo_padrao_indicador", joinColumns = @JoinColumn(name = "eixo_padrao_id", referencedColumnName = "id"), inverseJoinColumns = {
             @JoinColumn(name = "indicador_fonte_id", referencedColumnName = "fonte_id"),
             @JoinColumn(name = "indicador_cod_indicador", referencedColumnName = "cod_indicador")
-        }
-    )
+    })
     private Set<Indicador> indicadores;
-    
 
-    // Construtores
-    public EixoPadrao() {}
+    // Singleton: só deve existir uma instância de EixoPadrao
+    private static EixoPadrao instance;
+
+    private EixoPadrao() {
+        // Construtor privado para impedir múltiplas instâncias
+    }
+
+    public static EixoPadrao getInstance() {
+        if (instance == null) {
+            instance = new EixoPadrao();
+        }
+        return instance;
+    }
 
     public EixoPadrao(Eixo eixo, Set<Indicador> indicadores) {
         this.eixo = eixo;
