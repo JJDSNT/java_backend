@@ -18,7 +18,8 @@ package com.observatudo.backend.loader.indicadores.impl;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -143,8 +144,11 @@ public class CapagLoader extends BaseIndicadorLoaderStrategy {
 
                 ValorIndicador valorIndicador = new ValorIndicador();
                 valorIndicador.setIndicador(indicador);
-                valorIndicador.setLocalidade(null); // Para estados, ajuste conforme necessário
-                valorIndicador.setData(new SimpleDateFormat("dd/MM/yyyy").parse("03/10/2019")); // Exemplo de data
+                valorIndicador.setLocalidade(null); // Para estados, ajuste conforme necessário;
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                LocalDate data = LocalDate.parse(anoPreenchimento, formatter);
+                valorIndicador.setData(data);
+
                 valorIndicador.setValor(Double.parseDouble(indicador1.replace(',', '.'))); // Ajuste para o formato de
                                                                                            // número
 
@@ -172,10 +176,10 @@ public class CapagLoader extends BaseIndicadorLoaderStrategy {
                     ValorIndicador valorIndicador = new ValorIndicador();
                     valorIndicador.setIndicador(indicador);
                     valorIndicador.setLocalidade(cidade);
-                    valorIndicador.setData(new SimpleDateFormat("dd/MM/yyyy").parse("03/10/2019")); // Exemplo de data
-                    valorIndicador.setValor(Double.parseDouble(indicador1.replace(',', '.'))); // Ajuste para o formato
-                                                                                               // de número
-
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    LocalDate data = LocalDate.parse(anoPreenchimento, formatter);
+                    valorIndicador.setData(data);
+                    valorIndicador.setValor(Double.parseDouble(indicador1.replace(',', '.')));
                     // Salvar o valorIndicador no banco de dados se necessário
                 } else {
                     logger.warn("Cidade não encontrada para o código IBGE: " + codIbge);
