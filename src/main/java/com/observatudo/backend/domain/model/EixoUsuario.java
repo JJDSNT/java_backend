@@ -5,7 +5,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "eixo_usuario")
-public class EixoUsuario {
+public class EixoUsuario extends EixoBaseImpl {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
