@@ -6,6 +6,12 @@ public class IndicadorValorDTO {
     private String nomeIndicador;
     private Double valor;
 
+    public IndicadorValorDTO(String nomeIndicador, Double valor) {
+        this.nomeIndicador = nomeIndicador;
+        this.valor = valor;
+    }
+
+    // Construtor que aceita um objeto ValorIndicador
     public IndicadorValorDTO(ValorIndicador indicadorValor) {
         if (indicadorValor != null && indicadorValor.getIndicador() != null) {
             this.nomeIndicador = indicadorValor.getIndicador().getNome();
@@ -13,7 +19,7 @@ public class IndicadorValorDTO {
         }
     }
 
-    // Getters e setters
+    // Getters e Setters
     public String getNomeIndicador() {
         return nomeIndicador;
     }
