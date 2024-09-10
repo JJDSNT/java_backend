@@ -2,6 +2,7 @@ package com.observatudo.backend.service;
 
 import com.observatudo.backend.domain.dto.EixoComIndicadoresDTO;
 import com.observatudo.backend.domain.dto.IndicadorDTO;
+import com.observatudo.backend.domain.dto.LocalidadeIndicadoresDTO;
 import com.observatudo.backend.domain.dto.ResumoIndicadorDTO;
 import com.observatudo.backend.domain.model.*;
 import com.observatudo.backend.domain.repository.*;
@@ -26,13 +27,17 @@ public class IndicadorService {
     private final EixoUsuarioRepository eixoUsuarioRepository;
     private final EixoPadraoRepository eixoPadraoRepository;
     private final UsuarioRepository usuarioRepository;
+    private final LocalidadeRepository localidadeRepository;
 
+    // Construtor único com todas as dependências
     @Autowired
-    public IndicadorService(IndicadorRepository indicadorRepository,
-            ValorIndicadorRepository valorIndicadorRepository,
-            EixoUsuarioRepository eixoUsuarioRepository,
-            EixoPadraoRepository eixoPadraoRepository,
-            UsuarioRepository usuarioRepository) {
+    public IndicadorService(LocalidadeRepository localidadeRepository, 
+                            IndicadorRepository indicadorRepository,
+                            ValorIndicadorRepository valorIndicadorRepository,
+                            EixoUsuarioRepository eixoUsuarioRepository,
+                            EixoPadraoRepository eixoPadraoRepository,
+                            UsuarioRepository usuarioRepository) {
+        this.localidadeRepository = localidadeRepository;
         this.indicadorRepository = indicadorRepository;
         this.valorIndicadorRepository = valorIndicadorRepository;
         this.eixoUsuarioRepository = eixoUsuarioRepository;
@@ -63,6 +68,41 @@ public class IndicadorService {
 
         return resumo;
     }
+
+
+    public LocalidadeIndicadoresDTO listarIndicadoresPorLocalidade(Integer cidadeId) {
+        Cidade cidade = localidadeRepository.findCidadeByCodigo(cidadeId)
+            .orElseThrow(() -> new EntityNotFoundException("Cidade não encontrada"));
+    
+        Estado estado = cidade.getEstado();
+        Pais pais = estado.getPais();
+    
+        // Buscar os indicadores pela localidade (cidade, estado, país)
+        List<ValorIndicador> indicadoresCidade = valorIndicadorRepository.findByLocalidade(cidade);
+        List<ValorIndicador> indicadoresEstado = valorIndicadorRepository.findByLocalidade(estado);
+        List<ValorIndicador> indicadoresPais = valorIndicadorRepository.findByLocalidade(pais);
+    
+        return new LocalidadeIndicadoresDTO(cidade, indicadoresCidade, estado, indicadoresEstado, pais, indicadoresPais);
+    }
+    
+
+    // public LocalidadeIndicadoresDTO listarIndicadoresPorLocalidade(Integer cidadeId) {
+    //     // Busca a cidade
+    //     Cidade cidade = localidadeRepository.findCidadeById(cidadeId)
+    //         .orElseThrow(() -> new EntityNotFoundException("Cidade não encontrada"));
+
+    //     // Busca o estado e o país associados à cidade
+    //     Estado estado = cidade.getEstado();
+    //     Pais pais = estado.getPais();
+
+    //     // Busca os indicadores da cidade, estado e país
+    //     List<ValorIndicador> indicadoresCidade = indicadorRepository.findByLocalidade(cidade);
+    //     List<ValorIndicador> indicadoresEstado = indicadorRepository.findByLocalidade(estado);
+    //     List<ValorIndicador> indicadoresPais = indicadorRepository.findByLocalidade(pais);
+
+    //     // Converte para DTO
+    //     return new LocalidadeIndicadoresDTO(cidade, indicadoresCidade, estado, indicadoresEstado, pais, indicadoresPais);
+    // }
 
     public List<EixoComIndicadoresDTO> listarIndicadoresPorEixo() {
         List<Indicador> indicadores = indicadorRepository.findAll();
