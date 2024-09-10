@@ -1,22 +1,13 @@
 package com.observatudo.backend.service;
 
-import com.observatudo.backend.domain.dto.EixoComIndicadoresDTO;
-import com.observatudo.backend.domain.dto.IndicadorDTO;
-import com.observatudo.backend.domain.dto.LocalidadeIndicadoresDTO;
-import com.observatudo.backend.domain.dto.ResumoIndicadorDTO;
+import com.observatudo.backend.domain.dto.*;
 import com.observatudo.backend.domain.model.*;
 import com.observatudo.backend.domain.repository.*;
-
 import jakarta.persistence.EntityNotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,14 +20,13 @@ public class IndicadorService {
     private final UsuarioRepository usuarioRepository;
     private final LocalidadeRepository localidadeRepository;
 
-    // Construtor único com todas as dependências
     @Autowired
-    public IndicadorService(LocalidadeRepository localidadeRepository, 
-                            IndicadorRepository indicadorRepository,
-                            ValorIndicadorRepository valorIndicadorRepository,
-                            EixoUsuarioRepository eixoUsuarioRepository,
-                            EixoPadraoRepository eixoPadraoRepository,
-                            UsuarioRepository usuarioRepository) {
+    public IndicadorService(LocalidadeRepository localidadeRepository,
+            IndicadorRepository indicadorRepository,
+            ValorIndicadorRepository valorIndicadorRepository,
+            EixoUsuarioRepository eixoUsuarioRepository,
+            EixoPadraoRepository eixoPadraoRepository,
+            UsuarioRepository usuarioRepository) {
         this.localidadeRepository = localidadeRepository;
         this.indicadorRepository = indicadorRepository;
         this.valorIndicadorRepository = valorIndicadorRepository;
@@ -46,80 +36,92 @@ public class IndicadorService {
     }
 
     public ResumoIndicadorDTO obterResumoIndicadores(Integer codigoLocalidade) {
-        // Obtém os indicadores para a localidade especificada
         List<Indicador> indicadores = findByLocalidadeCodigo(codigoLocalidade);
-
-        // Agrupa indicadores por eixo
         Map<Eixo, List<IndicadorDTO>> agrupadosPorEixo = new HashMap<>();
 
-        for (Indicador indicador : indicadores) {
-            for (Eixo eixo : indicador.getEixos()) {
-                agrupadosPorEixo.computeIfAbsent(eixo, k -> new ArrayList<>())
-                        .add(new IndicadorDTO(
-                                indicador.getFonte().getNome(),
+        indicadores.forEach(indicador -> indicador.getEixos()
+                .forEach(eixo -> agrupadosPorEixo.computeIfAbsent(eixo, k -> new ArrayList<>())
+                        .add(new IndicadorDTO(indicador.getFonte().getNome(),
                                 indicador.getCodIndicador(),
                                 indicador.getNome(),
-                                indicador.getDescricao()));
-            }
-        }
+                                indicador.getDescricao()))));
 
         ResumoIndicadorDTO resumo = new ResumoIndicadorDTO();
         resumo.setIndicadoresPorEixo(agrupadosPorEixo);
-
         return resumo;
     }
 
-
     public LocalidadeIndicadoresDTO listarIndicadoresPorLocalidade(Integer cidadeId) {
         Cidade cidade = localidadeRepository.findCidadeByCodigo(cidadeId)
-            .orElseThrow(() -> new EntityNotFoundException("Cidade não encontrada"));
-    
+                .orElseThrow(() -> new EntityNotFoundException("Cidade não encontrada"));
+
         Estado estado = cidade.getEstado();
         Pais pais = estado.getPais();
-    
-        // Buscar os indicadores pela localidade (cidade, estado, país)
+
         List<ValorIndicador> indicadoresCidade = valorIndicadorRepository.findByLocalidade(cidade);
         List<ValorIndicador> indicadoresEstado = valorIndicadorRepository.findByLocalidade(estado);
         List<ValorIndicador> indicadoresPais = valorIndicadorRepository.findByLocalidade(pais);
-    
-        return new LocalidadeIndicadoresDTO(cidade, indicadoresCidade, estado, indicadoresEstado, pais, indicadoresPais);
+
+        return new LocalidadeIndicadoresDTO(cidade, indicadoresCidade, estado, indicadoresEstado, pais,
+                indicadoresPais);
     }
-    
 
-    // public LocalidadeIndicadoresDTO listarIndicadoresPorLocalidade(Integer cidadeId) {
-    //     // Busca a cidade
-    //     Cidade cidade = localidadeRepository.findCidadeById(cidadeId)
-    //         .orElseThrow(() -> new EntityNotFoundException("Cidade não encontrada"));
+    public LocalidadeIndicadoresDTO getIndicadoresPorLocalidade(Integer codigoLocalidade) {
+        // Busca a cidade pela localidade
+        Cidade cidade = localidadeRepository.findCidadeByCodigo(codigoLocalidade)
+                .orElseThrow(() -> new EntityNotFoundException("Cidade não encontrada"));
 
-    //     // Busca o estado e o país associados à cidade
-    //     Estado estado = cidade.getEstado();
-    //     Pais pais = estado.getPais();
+        Estado estado = cidade.getEstado();
+        Pais pais = estado.getPais();
 
-    //     // Busca os indicadores da cidade, estado e país
-    //     List<ValorIndicador> indicadoresCidade = indicadorRepository.findByLocalidade(cidade);
-    //     List<ValorIndicador> indicadoresEstado = indicadorRepository.findByLocalidade(estado);
-    //     List<ValorIndicador> indicadoresPais = indicadorRepository.findByLocalidade(pais);
+        // Busca os valores do indicador para cidade, estado e país
+        List<ValorIndicador> valoresIndicadorCidade = valorIndicadorRepository.findByLocalidade(cidade);
+        List<ValorIndicador> valoresIndicadorEstado = valorIndicadorRepository.findByLocalidade(estado);
+        List<ValorIndicador> valoresIndicadorPais = valorIndicadorRepository.findByLocalidade(pais);
 
-    //     // Converte para DTO
-    //     return new LocalidadeIndicadoresDTO(cidade, indicadoresCidade, estado, indicadoresEstado, pais, indicadoresPais);
-    // }
+        // Agrupando os indicadores da cidade
+        List<IndicadorValoresDTO> indicadoresCidade = agruparIndicadores(valoresIndicadorCidade);
+
+        // Agrupando os indicadores do estado
+        List<IndicadorValoresDTO> indicadoresEstado = agruparIndicadores(valoresIndicadorEstado);
+
+        // Agrupando os indicadores do país
+        List<IndicadorValoresDTO> indicadoresPais = agruparIndicadores(valoresIndicadorPais);
+
+        // Retorna o DTO final com cidade, estado e país corretamente preenchidos
+        return new LocalidadeIndicadoresDTO(
+                cidade.getNome(), indicadoresCidade,
+                estado.getNome(), indicadoresEstado,
+                pais.getNome(), indicadoresPais);
+    }
+
+    // Método auxiliar para agrupar indicadores
+    private List<IndicadorValoresDTO> agruparIndicadores(List<ValorIndicador> valoresIndicadores) {
+        Map<String, IndicadorValoresDTO> indicadoresMap = new HashMap<>();
+
+        valoresIndicadores.forEach(valorIndicador -> {
+            String nomeIndicador = valorIndicador.getIndicador().getNome();
+            indicadoresMap
+                    .computeIfAbsent(nomeIndicador, k -> new IndicadorValoresDTO(nomeIndicador))
+                    .addValor(new ValorDataDTO(valorIndicador.getData(), valorIndicador.getValor()));
+        });
+
+        return new ArrayList<>(indicadoresMap.values());
+    }
 
     public List<EixoComIndicadoresDTO> listarIndicadoresPorEixo() {
         List<Indicador> indicadores = indicadorRepository.findAll();
-    
-        // "Achatando" os eixos para agrupar corretamente
+
         Map<EixoPadrao, List<Indicador>> indicadoresAgrupadosPorEixo = indicadores.stream()
-            .flatMap(indicador -> indicador.getEixosPadrao().stream()
-                .map(eixoPadrao -> new AbstractMap.SimpleEntry<>(eixoPadrao, indicador)))
-            .collect(Collectors.groupingBy(Map.Entry::getKey, 
-                                           Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
-    
-        // Convertendo para o DTO final
+                .flatMap(indicador -> indicador.getEixosPadrao().stream()
+                        .map(eixoPadrao -> new AbstractMap.SimpleEntry<>(eixoPadrao, indicador)))
+                .collect(Collectors.groupingBy(Map.Entry::getKey,
+                        Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+
         return indicadoresAgrupadosPorEixo.entrySet().stream()
-            .map(entry -> new EixoComIndicadoresDTO(entry.getKey(), entry.getValue()))
-            .collect(Collectors.toList());
+                .map(entry -> new EixoComIndicadoresDTO(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
     }
-    
 
     public EixoBase getEixoByUsuarioId(Long usuarioId) {
         return usuarioRepository.findById(usuarioId)
@@ -138,9 +140,8 @@ public class IndicadorService {
     }
 
     public List<Indicador> findByLocalidadeCodigo(Integer codigoLocalidade) {
-        List<ValorIndicador> valorIndicadores = valorIndicadorRepository.findByLocalidadeCodigo(codigoLocalidade);
-        return valorIndicadores.stream()
-                .map(ValorIndicador::getIndicador)
+        return valorIndicadorRepository.findByLocalidadeCodigo(codigoLocalidade)
+                .stream().map(ValorIndicador::getIndicador)
                 .collect(Collectors.toList());
     }
 
@@ -165,35 +166,22 @@ public class IndicadorService {
         }
     }
 
-    @SuppressWarnings("unused")
-    public void setEixoParaIndicador(Integer fonteId, String codIndicador, Long usuarioId, Eixo eixoSelecionado) {
-        IndicadorId indicadorId = new IndicadorId(fonteId, codIndicador);
-        Indicador indicador = indicadorRepository.findById(indicadorId)
-                .orElseThrow(() -> new EntityNotFoundException("Indicador não encontrado"));
-
-        associarIndicadorAoEixo(fonteId, codIndicador, usuarioId);
-    }
-
     public void desassociarIndicadorDoEixo(Integer fonteId, String codIndicador) {
         IndicadorId indicadorId = new IndicadorId(fonteId, codIndicador);
         Indicador indicador = indicadorRepository.findById(indicadorId)
                 .orElseThrow(() -> new EntityNotFoundException("Indicador não encontrado"));
 
-        List<EixoBase> todosEixos = eixoUsuarioRepository.findAll().stream()
-                .map(eixoUsuario -> (EixoBase) eixoUsuario)
-                .collect(Collectors.toList());
+        List<EixoBase> todosEixos = new ArrayList<>();
+        todosEixos.addAll(eixoUsuarioRepository.findAll());
+        todosEixos.addAll(eixoPadraoRepository.findAll());
 
-        todosEixos.addAll(eixoPadraoRepository.findAll().stream()
-                .map(eixoPadrao -> (EixoBase) eixoPadrao)
-                .collect(Collectors.toList()));
-
-        for (EixoBase eixo : todosEixos) {
+        todosEixos.forEach(eixo -> {
             eixo.getIndicadores().remove(indicador);
             if (eixo instanceof EixoUsuario) {
                 eixoUsuarioRepository.save((EixoUsuario) eixo);
             } else if (eixo instanceof EixoPadrao) {
                 eixoPadraoRepository.save((EixoPadrao) eixo);
             }
-        }
+        });
     }
 }
