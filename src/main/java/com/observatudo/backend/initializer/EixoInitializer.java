@@ -3,11 +3,14 @@ package com.observatudo.backend.initializer;
 import com.observatudo.backend.domain.model.Eixo;
 import com.observatudo.backend.domain.model.Eixos;
 import com.observatudo.backend.service.EixoService;
+
+import jakarta.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,6 +28,7 @@ public class EixoInitializer {
     @PostConstruct
     public void initialize() {
         if (!eixoService.areEixosLoaded()) {
+            logger.info("Carregando eixos no banco de dados...");
             List<Eixo> eixos = Arrays.asList(
                 new Eixo(Eixos.SAUDE, "Saúde", "Saúde", "icon1", "cor1"),
                 new Eixo(Eixos.EDUCACAO, "Educação", "Educação", "icon2", "cor2"),

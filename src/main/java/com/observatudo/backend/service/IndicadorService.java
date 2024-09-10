@@ -5,10 +5,11 @@ import com.observatudo.backend.domain.dto.ResumoIndicadorDTO;
 import com.observatudo.backend.domain.model.*;
 import com.observatudo.backend.domain.repository.*;
 
+import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;

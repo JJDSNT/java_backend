@@ -13,4 +13,10 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update  # Atualiza o schema automaticamente ao reiniciar
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: validate
+          import_files_sql_exceptions:
+            fail_on_error: true
     show-sql: false  # Mostra as queries SQL no console
