@@ -1,0 +1,18 @@
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /api-docs
+  openapi:
+    info:
+      title: "ObservaTudo API"
+      description: "API para gerenciamento de eixos e indicadores."
+      version: "v1.0"
+      terms-of-service: "http://swagger.io/terms/"
+      contact:
+        name: "Suporte API"
+        email: "suporte@observatudo.com.br"
+        url: "http://observatudo.com.br"
+      license:
+        name: "Apache 2.0"
+        url: "http://springdoc.org"
