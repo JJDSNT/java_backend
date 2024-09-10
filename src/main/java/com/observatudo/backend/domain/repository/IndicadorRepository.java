@@ -17,8 +17,6 @@ public interface IndicadorRepository extends JpaRepository<Indicador, IndicadorI
 
     List<Indicador> findByLocalidade(Localidade localidade);
 
-    List<Indicador> findByLocalidadeCodigo(Integer codigoLocalidade);
-
     List<Indicador> findByFonteIdAndCodIndicadorIn(Integer fonteId, List<String> codIndicadores);
 
 }
