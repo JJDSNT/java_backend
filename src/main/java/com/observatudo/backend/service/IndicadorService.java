@@ -1,11 +1,9 @@
 package com.observatudo.backend.service;
 
-import com.observatudo.backend.domain.dto.IndicadorDTO;
 import com.observatudo.backend.domain.model.Indicador;
 import com.observatudo.backend.domain.model.ValorIndicador;
 import com.observatudo.backend.domain.repository.IndicadorRepository;
 import com.observatudo.backend.domain.repository.ValorIndicadorRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,42 +13,30 @@ import java.util.stream.Collectors;
 @Service
 public class IndicadorService {
 
-    @Autowired
-    private IndicadorRepository indicadorRepository;
+    private final IndicadorRepository indicadorRepository;
+    private final ValorIndicadorRepository valorIndicadorRepository;
 
     @Autowired
-    private ValorIndicadorRepository valorIndicadorRepository;
-
-    public List<IndicadorDTO> listarIndicadores() {
-        List<Indicador> indicadores = indicadorRepository.findAll();
-        return indicadores.stream()
-                           .map(this::convertToDTO)
-                           .toList();
+    public IndicadorService(IndicadorRepository indicadorRepository, ValorIndicadorRepository valorIndicadorRepository) {
+        this.indicadorRepository = indicadorRepository;
+        this.valorIndicadorRepository = valorIndicadorRepository;
     }
 
-
-    private IndicadorDTO convertToDTO(Indicador indicador) {
-        String fonteNome = indicador.getFonte() != null ? indicador.getFonte().getNome() : null;
-        return new IndicadorDTO(fonteNome, indicador.getCodIndicador(), indicador.getNome(), indicador.getDescricao());
+    // Método para listar todos os indicadores, se necessário
+    public List<Indicador> listarIndicadores() {
+        return indicadorRepository.findAll();
     }
 
-    public IndicadorDTO buscarIndicadorPorNome(String nomeIndicador) {
-        Indicador indicador = indicadorRepository.findByNome(nomeIndicador);
-        return convertToDTO(indicador);
-    }
-
-    public List<Indicador> findIndicadoresByLocalidadeCodigo(Integer codigoLocalidade) {
+    // Método para buscar indicadores por código de localidade
+    public List<Indicador> findByLocalidadeCodigo(Integer codigoLocalidade) {
         List<ValorIndicador> valorIndicadores = valorIndicadorRepository.findByLocalidadeCodigo(codigoLocalidade);
-        List<String> codIndicadores = valorIndicadores.stream()
-                .map(valor -> valor.getIndicador().getCodIndicador())
+        return valorIndicadores.stream()
+                .map(ValorIndicador::getIndicador)
                 .collect(Collectors.toList());
+    }
 
-        return indicadorRepository.findByFonteIdAndCodIndicadorIn(valorIndicadores.get(0).getIndicador().getFonte().getId(), codIndicadores);
+    // Método para buscar um indicador por nome
+    public Indicador findByNome(String nomeIndicador) {
+        return indicadorRepository.findByNome(nomeIndicador);
     }
 }
-
-
-
-
-
-
