@@ -17,6 +17,8 @@ public interface IndicadorRepository extends JpaRepository<Indicador, IndicadorI
     // Método para buscar indicadores com base em uma lista de códigos de indicadores e um ID de fonte
     List<Indicador> findByFonteIdAndCodIndicadorIn(Integer fonteId, List<String> codIndicadores);
 
-     List<Indicador> findByEixo(Eixo eixo);
+     //List<Indicador> findByEixo(Eixo eixo);
+
+     List<Indicador> findByEixos(Eixo eixo);
 
 }
