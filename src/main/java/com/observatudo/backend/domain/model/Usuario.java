@@ -1,7 +1,9 @@
 package com.observatudo.backend.domain.model;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "usuario")
@@ -22,7 +24,7 @@ public class Usuario {
     private String email;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EixoUsuario> eixos;
+    private List<EixoUsuario> eixos = new ArrayList<>();  // Inicializando a lista
 
     // Construtores
     public Usuario() {}
@@ -31,6 +33,7 @@ public class Usuario {
         this.nome = nome;
         this.email = email;
         this.role = "user";  // Define o valor padrão
+        this.eixos = new ArrayList<>();  // Inicializa a lista de eixos
     }
 
     // Getters e Setters
@@ -73,5 +76,18 @@ public class Usuario {
     public void setEixos(List<EixoUsuario> eixos) {
         this.eixos = eixos;
     }
-}
 
+    // Sobrescrevendo equals e hashCode
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Usuario usuario = (Usuario) o;
+        return Objects.equals(id, usuario.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+}
