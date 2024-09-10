@@ -12,4 +12,5 @@ import com.observatudo.backend.domain.model.Eixos;
 public interface EixoRepository extends JpaRepository<Eixo, Eixos> {
     // Métodos de consulta personalizados podem ser definidos aqui, se necessário
     Optional<Eixo> findByNome(String nome);
+    Optional<Eixo> findByNomeIgnoreCase(String nome);
 }

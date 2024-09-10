@@ -57,12 +57,12 @@ public class Eixo {
         this.cor = cor;
     }
 
-    // Método para adicionar Indicador, garantindo sincronização bidirecional
-    public void addIndicador(Indicador indicador) {
-        if (indicadores.add(indicador)) {
-            indicador.addEixo(this); // Sincroniza o lado de Indicador
-        }
-    }
+    // // Método para adicionar Indicador, garantindo sincronização bidirecional
+    // public void addIndicador(Indicador indicador) {
+    //     if (indicadores.add(indicador)) {
+    //         indicador.addEixo(this); // Sincroniza o lado de Indicador
+    //     }
+    // }
 
     // Getters e Setters
     public Eixos getId() {

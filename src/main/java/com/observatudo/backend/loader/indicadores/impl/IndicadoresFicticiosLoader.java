@@ -11,6 +11,9 @@ import com.observatudo.backend.domain.model.Localidade;
 import com.observatudo.backend.domain.model.ValorIndicador;
 import com.observatudo.backend.domain.model.ValorIndicadorId;
 import com.observatudo.backend.domain.model.Eixo;
+import com.observatudo.backend.domain.model.EixoBase;
+import com.observatudo.backend.domain.model.EixoPadrao;
+import com.observatudo.backend.domain.repository.EixoPadraoRepository;
 import com.observatudo.backend.domain.repository.EixoRepository;
 import com.observatudo.backend.domain.repository.IndicadorRepository;
 import com.observatudo.backend.domain.repository.ValorIndicadorRepository;
@@ -18,12 +21,15 @@ import com.observatudo.backend.loader.indicadores.BaseIndicadorLoaderStrategy;
 import com.observatudo.backend.service.IndicadorService;
 import com.observatudo.backend.service.LocalidadeService;
 
+import jakarta.transaction.Transactional;
+
 import java.util.Date;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.HashSet;
 
 @Component
 public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
@@ -43,8 +49,12 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
     private IndicadorService indicadorService;
 
     @Autowired
-    private EixoRepository eixoRepository;  // Repositório para buscar o Eixo
+    private EixoRepository eixoRepository; // Repositório para buscar o Eixo
 
+    @Autowired
+    private EixoPadraoRepository eixoPadraoRepository;
+
+    @Transactional
     @Override
     public void loadIndicadores() {
         // Inicializa a fonte
@@ -58,15 +68,24 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
         logger.info("Fonte inicializada: Fonte Fictícia com ID: {}", fonte.getId());
 
         List<String[]> lines = Arrays.asList(
-                new String[] { "2927408", "Mortalidade Materna", "2021-01-01", "35.4", "João Silva", "joao.silva@exemplo.com" },
-                new String[] { "2927408", "Mortalidade Materna", "2022-01-01", "36.1", "João Silva", "joao.silva@exemplo.com" },
-                new String[] { "2927408", "Mortalidade Materna", "2023-01-01", "37.0", "João Silva", "joao.silva@exemplo.com" },
-                new String[] { "3550308", "Mortalidade Infantil", "2021-01-01", "12.4", "Maria Oliveira", "maria.oliveira@exemplo.com" },
-                new String[] { "3550308", "Mortalidade Infantil", "2022-01-01", "11.9", "Maria Oliveira", "maria.oliveira@exemplo.com" },
-                new String[] { "3550308", "Mortalidade Infantil", "2023-01-01", "11.5", "Maria Oliveira", "maria.oliveira@exemplo.com" },
-                new String[] { "29", "Taxa de Desemprego", "2021-01-01", "8.5", "Carlos Pereira", "carlos.pereira@exemplo.com" },
-                new String[] { "29", "Taxa de Desemprego", "2022-01-01", "8.1", "Carlos Pereira", "carlos.pereira@exemplo.com" },
-                new String[] { "29", "Taxa de Desemprego", "2023-01-01", "7.8", "Carlos Pereira", "carlos.pereira@exemplo.com" });
+                new String[] { "2927408", "Mortalidade Materna", "2021-01-01", "35.4", "João Silva",
+                        "joao.silva@exemplo.com" },
+                new String[] { "2927408", "Mortalidade Materna", "2022-01-01", "36.1", "João Silva",
+                        "joao.silva@exemplo.com" },
+                new String[] { "2927408", "Mortalidade Materna", "2023-01-01", "37.0", "João Silva",
+                        "joao.silva@exemplo.com" },
+                new String[] { "3550308", "Mortalidade Infantil", "2021-01-01", "12.4", "Maria Oliveira",
+                        "maria.oliveira@exemplo.com" },
+                new String[] { "3550308", "Mortalidade Infantil", "2022-01-01", "11.9", "Maria Oliveira",
+                        "maria.oliveira@exemplo.com" },
+                new String[] { "3550308", "Mortalidade Infantil", "2023-01-01", "11.5", "Maria Oliveira",
+                        "maria.oliveira@exemplo.com" },
+                new String[] { "29", "Taxa de Desemprego", "2021-01-01", "8.5", "Carlos Pereira",
+                        "carlos.pereira@exemplo.com" },
+                new String[] { "29", "Taxa de Desemprego", "2022-01-01", "8.1", "Carlos Pereira",
+                        "carlos.pereira@exemplo.com" },
+                new String[] { "29", "Taxa de Desemprego", "2023-01-01", "7.8", "Carlos Pereira",
+                        "carlos.pereira@exemplo.com" });
 
         if (!localidadeService.areLocalidadesLoaded()) {
             logger.error("Algumas localidades esperadas não estão carregadas no banco de dados.");
@@ -74,8 +93,13 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
         }
 
         for (String[] line : lines) {
-            processLine(line);
+        processLine(line);
         }
+
+        // String[] testLine = { "2927408", "Mortalidade Materna", "2021-01-01", "35.4", "João Silva",
+        //         "joao.silva@exemplo.com" };
+        // processLine(testLine);
+
     }
 
     public void processLine(String[] line) {
@@ -102,15 +126,27 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
                 indicador.setCodIndicador(gerarCodIndicador());
 
                 // Busca o eixo correto com base no enum Eixos
-                Eixo eixo = buscarEixo(obterEixoPeloNomeIndicador(nomeIndicador));
+                EixoPadrao eixoPadrao = buscarEixoPadrao(obterEixoPeloNomeIndicador(nomeIndicador));
 
-                // Adicionar o eixo ao indicador
-                indicador.addEixo(eixo);
+                // Verificar se o eixo já está associado ao indicador
+                if (!indicador.getEixosPadrao().contains(eixoPadrao)) {
+                    // Adicionar o eixoPadrao ao indicador
+                    indicador.addEixoPadrao(eixoPadrao);
+
+                    // Adicionar o indicador ao eixoPadrao (caso o relacionamento seja bidirecional)
+                    eixoPadrao.addIndicador(indicador);
+
+                    // Persistir as mudanças no banco de dados, se necessário
+                    indicadorRepository.save(indicador);
+                }
 
                 indicador = indicadorRepository.save(indicador);
                 logger.info("Indicador criado e salvo: {}", nomeIndicador);
+                logger.info("Indicador criado com fonteId={} e codIndicador={}", indicador.getFonteId(),
+                        indicador.getCodIndicador());
 
-                indicadorService.associarIndicadorAoEixo(indicador.getFonteId(), indicador.getCodIndicador(), null);
+                // indicadorService.associarIndicadorAoEixo(indicador.getFonteId(),
+                // indicador.getCodIndicador(), null);
             } else {
                 logger.info("Indicador já existe: {}", nomeIndicador);
             }
@@ -118,10 +154,14 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
             Localidade localidade = localidadeService.findByCodigo(Integer.parseInt(codigoIbge));
             if (localidade != null) {
                 ValorIndicadorId valorIndicadorId = new ValorIndicadorId(
-                        indicador.getFonteId(), 
+                        indicador.getFonteId(),
                         indicador.getCodIndicador(),
                         localidade.getCodigo(),
                         data);
+
+                logger.info("ValorIndicadorId criado: fonteId={}, codIndicador={}, codigoLocalidade={}, data={}",
+                        indicador.getFonteId(), indicador.getCodIndicador(), localidade.getCodigo(), data);
+
                 ValorIndicador valorIndicador = new ValorIndicador();
                 valorIndicador.setId(valorIndicadorId);
                 valorIndicador.setIndicador(indicador);
@@ -139,11 +179,27 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
         }
     }
 
-    // Método para buscar o Eixo no banco de dados baseado no enum Eixos
-    private Eixo buscarEixo(Eixos eixoEnum) {
-        return eixoRepository.findByNome(eixoEnum.name())
-                .orElseThrow(() -> new RuntimeException("Eixo não encontrado para o enum: " + eixoEnum));
+    public EixoPadrao buscarEixoPadrao(Eixos eixoEnum) {
+        // Log para depuração
+        System.out.println("Buscando Eixo: " + eixoEnum.getNome());
+    
+        // Busca o Eixo ignorando maiúsculas/minúsculas
+        Eixo eixo = eixoRepository.findByNomeIgnoreCase(eixoEnum.getNome())
+                .orElseThrow(() -> new IllegalArgumentException("Eixo não encontrado: " + eixoEnum.getNome()));
+    
+        System.out.println("Eixo encontrado: " + eixo.getNome());
+    
+        // Busca o EixoPadrao com base no Eixo encontrado
+        return eixoPadraoRepository.findByEixo(eixo)
+                .orElseGet(() -> {
+                    // Se não encontrado, cria um novo EixoPadrao
+                    EixoPadrao novoEixoPadrao = new EixoPadrao(eixo, new HashSet<>());
+                    eixoPadraoRepository.save(novoEixoPadrao);
+                    System.out.println("Novo EixoPadrao criado para o eixo: " + eixo.getNome());
+                    return novoEixoPadrao;
+                });
     }
+    
 
     // Método para mapear o nome do indicador para o enum Eixos
     private Eixos obterEixoPeloNomeIndicador(String nomeIndicador) {
@@ -152,7 +208,7 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
         } else if ("Taxa de Desemprego".equals(nomeIndicador)) {
             return Eixos.ECONOMIA;
         } else {
-            return Eixos.PERSONALIZADO;  // Definir como personalizado para outros indicadores
+            return Eixos.PERSONALIZADO; // Definir como personalizado para outros indicadores
         }
     }
 

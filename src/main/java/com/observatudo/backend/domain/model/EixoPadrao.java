@@ -2,7 +2,9 @@ package com.observatudo.backend.domain.model;
 
 import jakarta.persistence.*;
 import java.util.Set;
+import java.util.HashSet;
 
+// EixoPadrao é uma classe que representa um eixo padrão, que é um eixo com indicadores pré-definidos
 @Entity
 @Table(name = "eixo_padrao")
 public class EixoPadrao extends EixoBaseImpl {
@@ -16,20 +18,16 @@ public class EixoPadrao extends EixoBaseImpl {
     @JoinColumn(name = "eixo_id", nullable = false)
     private Eixo eixo;
 
-    @ManyToMany
-    @JoinTable(name = "eixo_padrao_indicador", joinColumns = @JoinColumn(name = "eixo_padrao_id", referencedColumnName = "id"), inverseJoinColumns = {
-            @JoinColumn(name = "indicador_fonte_id", referencedColumnName = "fonte_id"),
-            @JoinColumn(name = "indicador_cod_indicador", referencedColumnName = "cod_indicador")
-    })
-    private Set<Indicador> indicadores;
+    @ManyToMany(mappedBy = "eixosPadrao")
+    private Set<Indicador> indicadores = new HashSet<>();
 
     // Singleton: só deve existir uma instância de EixoPadrao
     private static EixoPadrao instance;
 
-    private EixoPadrao() {
-        // Construtor privado para impedir múltiplas instâncias
-    }
+    // Construtor privado para impedir múltiplas instâncias
+    private EixoPadrao() {}
 
+    // Método para obter a instância única de EixoPadrao (padrão Singleton)
     public static EixoPadrao getInstance() {
         if (instance == null) {
             instance = new EixoPadrao();
@@ -37,9 +35,19 @@ public class EixoPadrao extends EixoBaseImpl {
         return instance;
     }
 
+    // Construtor público alternativo para criar instâncias diretamente (se necessário)
     public EixoPadrao(Eixo eixo, Set<Indicador> indicadores) {
         this.eixo = eixo;
         this.indicadores = indicadores;
+    }
+
+    // Método para adicionar um indicador ao eixo
+    public void addIndicador(Indicador indicador) {
+        if (!indicadores.contains(indicador)) {
+            indicadores.add(indicador);
+            // Adicionar o eixo ao indicador para manter o relacionamento bidirecional
+            indicador.getEixosPadrao().add(this);
+        }
     }
 
     // Getters e Setters

@@ -5,7 +5,7 @@ import java.util.Set;
 public class EixoBaseImpl implements EixoBase {
 
     private Eixo eixo;
-    private Set<Indicador> indicadores;
+    protected Set<Indicador> indicadores;
 
     // Construtor padrão
     public EixoBaseImpl() {
