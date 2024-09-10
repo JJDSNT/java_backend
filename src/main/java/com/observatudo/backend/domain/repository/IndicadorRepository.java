@@ -1,22 +1,18 @@
 package com.observatudo.backend.domain.repository;
 
-import java.util.List;
-
+import com.observatudo.backend.domain.model.Indicador;
+import com.observatudo.backend.domain.model.IndicadorId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.observatudo.backend.domain.model.Indicador;
-import com.observatudo.backend.domain.model.IndicadorId;
-import com.observatudo.backend.domain.model.Localidade;
+import java.util.List;
 
 @Repository
 public interface IndicadorRepository extends JpaRepository<Indicador, IndicadorId> {
-    // Métodos de consulta personalizados podem ser definidos aqui, se necessário
 
+    // Método para buscar um indicador pelo nome
     Indicador findByNome(String nomeIndicador);
 
-    List<Indicador> findByLocalidade(Localidade localidade);
-
+    // Método para buscar indicadores com base em uma lista de códigos de indicadores e um ID de fonte
     List<Indicador> findByFonteIdAndCodIndicadorIn(Integer fonteId, List<String> codIndicadores);
-
 }
