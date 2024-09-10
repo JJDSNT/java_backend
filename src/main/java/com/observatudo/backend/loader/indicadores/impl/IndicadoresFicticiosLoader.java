@@ -45,7 +45,6 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
         // Inicializa a fonte
         initializeFonte("Fonte Fictícia", "https://ficticia.com");
 
-        // Certifica-se de que a fonte foi inicializada corretamente
         if (fonte == null || fonte.getId() == null) {
             logger.error("A fonte não foi inicializada ou não possui um ID válido.");
             return;
@@ -53,34 +52,22 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
 
         logger.info("Fonte inicializada: Fonte Fictícia com ID: {}", fonte.getId());
 
-        // Dados fictícios para dois indicadores em duas localidades
         List<String[]> lines = Arrays.asList(
-                new String[] { "2927408", "Mortalidade Materna", "2021-01-01", "35.4", "João Silva",
-                        "joao.silva@exemplo.com" },
-                new String[] { "2927408", "Mortalidade Materna", "2022-01-01", "36.1", "João Silva",
-                        "joao.silva@exemplo.com" },
-                new String[] { "2927408", "Mortalidade Materna", "2023-01-01", "37.0", "João Silva",
-                        "joao.silva@exemplo.com" },
-                new String[] { "3550308", "Mortalidade Infantil", "2021-01-01", "12.4", "Maria Oliveira",
-                        "maria.oliveira@exemplo.com" },
-                new String[] { "3550308", "Mortalidade Infantil", "2022-01-01", "11.9", "Maria Oliveira",
-                        "maria.oliveira@exemplo.com" },
-                new String[] { "3550308", "Mortalidade Infantil", "2023-01-01", "11.5", "Maria Oliveira",
-                        "maria.oliveira@exemplo.com" },
-                new String[] { "29", "Taxa de Desemprego", "2021-01-01", "8.5", "Carlos Pereira",
-                        "carlos.pereira@exemplo.com" },
-                new String[] { "29", "Taxa de Desemprego", "2022-01-01", "8.1", "Carlos Pereira",
-                        "carlos.pereira@exemplo.com" },
-                new String[] { "29", "Taxa de Desemprego", "2023-01-01", "7.8", "Carlos Pereira",
-                        "carlos.pereira@exemplo.com" });
+                new String[] { "2927408", "Mortalidade Materna", "2021-01-01", "35.4", "João Silva", "joao.silva@exemplo.com" },
+                new String[] { "2927408", "Mortalidade Materna", "2022-01-01", "36.1", "João Silva", "joao.silva@exemplo.com" },
+                new String[] { "2927408", "Mortalidade Materna", "2023-01-01", "37.0", "João Silva", "joao.silva@exemplo.com" },
+                new String[] { "3550308", "Mortalidade Infantil", "2021-01-01", "12.4", "Maria Oliveira", "maria.oliveira@exemplo.com" },
+                new String[] { "3550308", "Mortalidade Infantil", "2022-01-01", "11.9", "Maria Oliveira", "maria.oliveira@exemplo.com" },
+                new String[] { "3550308", "Mortalidade Infantil", "2023-01-01", "11.5", "Maria Oliveira", "maria.oliveira@exemplo.com" },
+                new String[] { "29", "Taxa de Desemprego", "2021-01-01", "8.5", "Carlos Pereira", "carlos.pereira@exemplo.com" },
+                new String[] { "29", "Taxa de Desemprego", "2022-01-01", "8.1", "Carlos Pereira", "carlos.pereira@exemplo.com" },
+                new String[] { "29", "Taxa de Desemprego", "2023-01-01", "7.8", "Carlos Pereira", "carlos.pereira@exemplo.com" });
 
-        // Verifica se todas as localidades estão carregadas
         if (!localidadeService.areLocalidadesLoaded()) {
             logger.error("Algumas localidades esperadas não estão carregadas no banco de dados.");
             return;
         }
 
-        // Processa as linhas
         for (String[] line : lines) {
             processLine(line);
         }
@@ -95,62 +82,51 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
             String dono = line[4];
             String email = line[5];
 
-            // Converte a string de data para LocalDate usando um DateTimeFormatter
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate localDate = LocalDate.parse(dataStr, formatter);
-
-            // Converte LocalDate para Date
             Date data = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
 
-            // Criação ou busca de Indicador
             Indicador indicador = indicadorRepository.findByNome(nomeIndicador);
             if (indicador == null) {
                 indicador = new Indicador();
                 indicador.setNome(nomeIndicador);
                 indicador.setFonte(fonte);
-                indicador.setFonteId(fonte.getId()); // Garante que a fonte não é null
+                indicador.setFonteId(fonte.getId());
                 indicador.setDono(dono);
                 indicador.setEmail(email);
-                indicador.setCodIndicador(gerarCodIndicador()); // Gera o código do indicador
+                indicador.setCodIndicador(gerarCodIndicador());
 
                 // Associa o eixo correto com base no nome do indicador
                 if ("Mortalidade Materna".equals(nomeIndicador) || "Mortalidade Infantil".equals(nomeIndicador)) {
-                    indicador.setEixo(Eixos.SAUDE);
+                    indicador.addEixo(Eixos.SAUDE); // Usar o método addEixo
                 } else if ("Taxa de Desemprego".equals(nomeIndicador)) {
-                    indicador.setEixo(Eixos.ECONOMIA);
+                    indicador.addEixo(Eixos.ECONOMIA); // Usar o método addEixo
                 } else {
-                    indicador.setEixo(Eixos.PERSONALIZADO); // Definido como personalizado caso o indicador não se
-                                                            // enquadre
+                    indicador.addEixo(Eixos.PERSONALIZADO); // Definir como personalizado caso não se enquadre
                 }
 
-                // Salva o Indicador
                 indicador = indicadorRepository.save(indicador);
                 logger.info("Indicador criado e salvo: {}", nomeIndicador);
 
-                // Associa o indicador a um eixo
-                indicadorService.associarIndicadorAoEixo(indicador.getId(), null); // Considerando que pode não ter um
-                                                                                   // usuário
+                indicadorService.associarIndicadorAoEixo(indicador.getFonteId(), indicador.getCodIndicador(), null);
             } else {
                 logger.info("Indicador já existe: {}", nomeIndicador);
             }
 
-            // Busca a localidade para o valorIndicador
             Localidade localidade = localidadeService.findByCodigo(Integer.parseInt(codigoIbge));
             if (localidade != null) {
-                // Criação do ValorIndicador
                 ValorIndicadorId valorIndicadorId = new ValorIndicadorId(
-                        indicador.getFonteId(), // Certifique-se de que esse valor está correto
+                        indicador.getFonteId(), 
                         indicador.getCodIndicador(),
                         localidade.getCodigo(),
                         data);
                 ValorIndicador valorIndicador = new ValorIndicador();
-                valorIndicador.setId(valorIndicadorId); // Definindo a chave composta
+                valorIndicador.setId(valorIndicadorId);
                 valorIndicador.setIndicador(indicador);
                 valorIndicador.setLocalidade(localidade);
-                valorIndicador.setData(data); // Isso deve ser redundante, pois já faz parte do ID
+                valorIndicador.setData(data);
                 valorIndicador.setValor(valor);
 
-                // Salva o ValorIndicador
                 valorIndicadorRepository.save(valorIndicador);
                 logger.info("ValorIndicador salvo para o indicador: {}", nomeIndicador);
             } else {
@@ -161,10 +137,8 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
         }
     }
 
-    // Método para gerar o código do indicador (apenas exemplo)
     private String gerarCodIndicador() {
-        // Implemente a lógica para gerar um código de indicador, se necessário
-        return "COD" + System.currentTimeMillis(); // Exemplo de geração simples
+        return "COD" + System.currentTimeMillis();
     }
 
     @Override
