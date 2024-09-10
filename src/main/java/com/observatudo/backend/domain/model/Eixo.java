@@ -30,7 +30,10 @@ public class Eixo {
     @JoinTable(
         name = "indicador_eixo",
         joinColumns = @JoinColumn(name = "eixo_id"),
-        inverseJoinColumns = @JoinColumn(name = "indicador_id")
+        inverseJoinColumns = {
+            @JoinColumn(name = "indicador_fonte_id"),
+            @JoinColumn(name = "indicador_cod_indicador")
+        }
     )
     private List<Indicador> indicadores;
 
@@ -44,7 +47,10 @@ public class Eixo {
     @JoinTable(
         name = "indicador_eixo_padrao",
         joinColumns = @JoinColumn(name = "eixo_id"),
-        inverseJoinColumns = @JoinColumn(name = "indicador_id")
+        inverseJoinColumns = {
+            @JoinColumn(name = "indicador_fonte_id"),
+            @JoinColumn(name = "indicador_cod_indicador")
+        }
     )
     private List<Indicador> indicadorPadrao;
 
@@ -52,9 +58,42 @@ public class Eixo {
     @JoinTable(
         name = "indicador_eixo_usuario",
         joinColumns = @JoinColumn(name = "eixo_id"),
-        inverseJoinColumns = @JoinColumn(name = "indicador_id")
+        inverseJoinColumns = {
+            @JoinColumn(name = "indicador_fonte_id"),
+            @JoinColumn(name = "indicador_cod_indicador")
+        }
     )
     private List<Indicador> indicadoresUsuario;
+
+    // @ManyToMany
+    // @JoinTable(
+    //     name = "indicador_eixo",
+    //     joinColumns = @JoinColumn(name = "eixo_id"),
+    //     inverseJoinColumns = @JoinColumn(name = "indicador_id")
+    // )
+    // private List<Indicador> indicadores;
+
+    // @OneToMany(mappedBy = "eixo", cascade = CascadeType.ALL)
+    // private List<EixoPadrao> eixoPadrao;
+
+    // @OneToMany(mappedBy = "eixo", cascade = CascadeType.ALL)
+    // private List<EixoUsuario> eixosUsuario;
+
+    // @ManyToMany
+    // @JoinTable(
+    //     name = "indicador_eixo_padrao",
+    //     joinColumns = @JoinColumn(name = "eixo_id"),
+    //     inverseJoinColumns = @JoinColumn(name = "indicador_id")
+    // )
+    // private List<Indicador> indicadorPadrao;
+
+    // @ManyToMany
+    // @JoinTable(
+    //     name = "indicador_eixo_usuario",
+    //     joinColumns = @JoinColumn(name = "eixo_id"),
+    //     inverseJoinColumns = @JoinColumn(name = "indicador_id")
+    // )
+    // private List<Indicador> indicadoresUsuario;
 
     // Construtores
     public Eixo() {
