@@ -7,6 +7,11 @@ public class EixoBaseImpl implements EixoBase {
     private Eixo eixo;
     private Set<Indicador> indicadores;
 
+    // Construtor padrão
+    public EixoBaseImpl() {
+        // Inicialização padrão, se necessário
+    }
+
     // Construtor para injeção de dependências
     public EixoBaseImpl(Eixo eixo, Set<Indicador> indicadores) {
         this.eixo = eixo;
@@ -23,5 +28,8 @@ public class EixoBaseImpl implements EixoBase {
         return this.indicadores;
     }
 
+    public void setIndicadores(Set<Indicador> indicadores) {
+        this.indicadores = indicadores;
+    }
     // Outros métodos auxiliares podem ser adicionados conforme a lógica do seu sistema
 }
