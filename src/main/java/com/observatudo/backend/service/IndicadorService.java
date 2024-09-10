@@ -1,15 +1,7 @@
 package com.observatudo.backend.service;
 
-import com.observatudo.backend.domain.model.Eixo;
-import com.observatudo.backend.domain.model.EixoPadrao;
-import com.observatudo.backend.domain.model.EixoUsuario;
-import com.observatudo.backend.domain.model.Indicador;
-import com.observatudo.backend.domain.model.IndicadorId;
-import com.observatudo.backend.domain.model.ValorIndicador;
-import com.observatudo.backend.domain.repository.EixoPadraoRepository;
-import com.observatudo.backend.domain.repository.EixoUsuarioRepository;
-import com.observatudo.backend.domain.repository.IndicadorRepository;
-import com.observatudo.backend.domain.repository.ValorIndicadorRepository;
+import com.observatudo.backend.domain.model.*;
+import com.observatudo.backend.domain.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,27 +17,31 @@ public class IndicadorService {
     private final ValorIndicadorRepository valorIndicadorRepository;
     private final EixoUsuarioRepository eixoUsuarioRepository;
     private final EixoPadraoRepository eixoPadraoRepository;
+    private final UsuarioRepository usuarioRepository;
 
     @Autowired
     public IndicadorService(IndicadorRepository indicadorRepository,
-                            ValorIndicadorRepository valorIndicadorRepository,
-                            EixoUsuarioRepository eixoUsuarioRepository,
-                            EixoPadraoRepository eixoPadraoRepository) {
+            ValorIndicadorRepository valorIndicadorRepository,
+            EixoUsuarioRepository eixoUsuarioRepository,
+            EixoPadraoRepository eixoPadraoRepository,
+            UsuarioRepository usuarioRepository) {
         this.indicadorRepository = indicadorRepository;
         this.valorIndicadorRepository = valorIndicadorRepository;
         this.eixoUsuarioRepository = eixoUsuarioRepository;
         this.eixoPadraoRepository = eixoPadraoRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
-    public Eixo getEixoByUsuarioId(Long usuarioId) {
-        Optional<EixoUsuario> optionalEixoUsuario = eixoUsuarioRepository.findByUsuarioId(usuarioId);
-        if (optionalEixoUsuario.isPresent()) {
-            return optionalEixoUsuario.get().getEixo();
-        } else {
-            return eixoPadraoRepository.findSingletonEixoPadrao()
-                    .map(EixoPadrao::getEixo)
-                    .orElseThrow(() -> new RuntimeException("Eixo padrão não encontrado"));
-        }
+    public EixoBase getEixoByUsuarioId(Long usuarioId) {
+        return usuarioRepository.findById(usuarioId)
+                .map(usuario -> usuario.getEixos().isEmpty() ? (EixoBase) getEixoPadrao()
+                        : (EixoBase) usuario.getEixos())
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+    }
+
+    private EixoBase getEixoPadrao() {
+        return eixoPadraoRepository.findSingletonEixoPadrao()
+                .orElseThrow(() -> new RuntimeException("Eixo padrão não encontrado"));
     }
 
     public List<Indicador> listarIndicadores() {
@@ -68,11 +64,7 @@ public class IndicadorService {
         Indicador indicador = indicadorRepository.findById(indicadorId)
                 .orElseThrow(() -> new EntityNotFoundException("Indicador não encontrado"));
 
-        Eixo eixo = eixoUsuarioRepository.findByUsuarioId(usuarioId)
-                .map(EixoUsuario::getEixo)
-                .orElseGet(() -> eixoPadraoRepository.findSingletonEixoPadrao()
-                        .map(EixoPadrao::getEixo)
-                        .orElseThrow(() -> new RuntimeException("Eixo padrão não encontrado")));
+        EixoBase eixo = getEixoByUsuarioId(usuarioId);
 
         if (!eixo.getIndicadores().contains(indicador)) {
             eixo.getIndicadores().add(indicador);
@@ -89,13 +81,6 @@ public class IndicadorService {
         Indicador indicador = indicadorRepository.findById(indicadorId)
                 .orElseThrow(() -> new EntityNotFoundException("Indicador não encontrado"));
 
-        Eixo eixo = eixoUsuarioRepository.findByUsuarioId(usuarioId)
-                .map(EixoUsuario::getEixo)
-                .orElseGet(() -> eixoPadraoRepository.findAll().stream()
-                        .filter(eixoPadrao -> eixoPadrao.getEixo().equals(eixoSelecionado))
-                        .findFirst()
-                        .orElseThrow(() -> new EntityNotFoundException("Eixo padrão não encontrado para o indicador.")));
-
         associarIndicadorAoEixo(fonteId, codIndicador, usuarioId);
     }
 
@@ -104,14 +89,14 @@ public class IndicadorService {
         Indicador indicador = indicadorRepository.findById(indicadorId)
                 .orElseThrow(() -> new EntityNotFoundException("Indicador não encontrado"));
 
-        List<Eixo> todosEixos = eixoUsuarioRepository.findAll().stream()
+        List<EixoBase> todosEixos = eixoUsuarioRepository.findAll().stream()
                 .map(EixoUsuario::getEixo)
                 .collect(Collectors.toList());
         todosEixos.addAll(eixoPadraoRepository.findAll().stream()
                 .map(EixoPadrao::getEixo)
                 .collect(Collectors.toList()));
 
-        for (Eixo eixo : todosEixos) {
+        for (EixoBase eixo : todosEixos) {
             eixo.getIndicadores().remove(indicador);
             if (eixo instanceof EixoUsuario) {
                 eixoUsuarioRepository.save((EixoUsuario) eixo);
