@@ -84,6 +84,7 @@ public class IndicadorService {
         associarIndicadorAoEixo(fonteId, codIndicador, usuarioId);
     }
 
+
     public void desassociarIndicadorDoEixo(Integer fonteId, String codIndicador) {
         IndicadorId indicadorId = new IndicadorId(fonteId, codIndicador);
         Indicador indicador = indicadorRepository.findById(indicadorId)
