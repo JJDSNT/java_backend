@@ -2,7 +2,7 @@ package com.observatudo.backend.domain.model;
 
 import jakarta.persistence.*;
 import java.util.ArrayList;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -201,7 +201,7 @@ public class Indicador {
     }
 
     // Método para obter valor por data
-    public double getValor(Date data) {
+    public double getValor(LocalDate data) {
         return valoresIndicador.stream()
                 .filter(valor -> valor.getData().equals(data))
                 .findFirst()
