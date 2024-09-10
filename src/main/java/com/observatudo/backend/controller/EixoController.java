@@ -1,3 +1,18 @@
+package com.observatudo.backend.controller;
+
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.observatudo.backend.domain.dto.EixoDTO;
+import com.observatudo.backend.domain.dto.IndicadorDTO;
+import com.observatudo.backend.service.EixoService;
+
 @RestController
 @RequestMapping("/api/eixos")
 public class EixoController {
