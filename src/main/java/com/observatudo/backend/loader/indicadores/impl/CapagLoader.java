@@ -17,7 +17,6 @@ package com.observatudo.backend.loader.indicadores.impl;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -46,6 +45,9 @@ public class CapagLoader extends BaseIndicadorLoaderStrategy {
     private static final String PATH_MUNICIPIOS = "src/main/resources/data/dados_govbr/capag/municipios/CAPAG-Municipios.csv";
 
     private static final Logger logger = LoggerFactory.getLogger(CapagLoader.class);
+
+    // Solução provisória: Data padrão para usar em caso de erro
+    private static final LocalDate DATA_PADRAO = LocalDate.of(2000, 1, 1);
 
     @Autowired
     private CidadeRepository cidadeRepository;
@@ -145,6 +147,7 @@ public class CapagLoader extends BaseIndicadorLoaderStrategy {
                 ValorIndicador valorIndicador = new ValorIndicador();
                 valorIndicador.setIndicador(indicador);
                 valorIndicador.setLocalidade(null); // Para estados, ajuste conforme necessário;
+                String anoPreenchimento = "01/01/2021";
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                 LocalDate data = LocalDate.parse(anoPreenchimento, formatter);
                 valorIndicador.setData(data);
@@ -176,6 +179,7 @@ public class CapagLoader extends BaseIndicadorLoaderStrategy {
                     ValorIndicador valorIndicador = new ValorIndicador();
                     valorIndicador.setIndicador(indicador);
                     valorIndicador.setLocalidade(cidade);
+                    String anoPreenchimento = "01/01/2021";
                     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
                     LocalDate data = LocalDate.parse(anoPreenchimento, formatter);
                     valorIndicador.setData(data);
@@ -185,8 +189,6 @@ public class CapagLoader extends BaseIndicadorLoaderStrategy {
                     logger.warn("Cidade não encontrada para o código IBGE: " + codIbge);
                 }
             }
-        } catch (ParseException e) {
-            logger.error("Erro ao processar data no formato: " + e.getMessage(), e);
         } catch (NumberFormatException e) {
             logger.error("Erro ao converter número: " + e.getMessage(), e);
         }
