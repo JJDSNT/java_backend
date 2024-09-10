@@ -1,10 +1,10 @@
 package com.observatudo.backend.domain.model;
 
-import java.util.List;
+import java.util.Set;
 
 public abstract class EixoBaseImpl implements EixoBase {
     protected Eixo eixo;
-    protected List<Indicador> indicadores;
+    protected Set<Indicador> indicadores;
 
     @Override
     public Eixo getEixo() {
@@ -12,7 +12,7 @@ public abstract class EixoBaseImpl implements EixoBase {
     }
 
     @Override
-    public List<Indicador> getIndicadores() {
+    public Set<Indicador> getIndicadores() {
         return this.indicadores;
     }
 

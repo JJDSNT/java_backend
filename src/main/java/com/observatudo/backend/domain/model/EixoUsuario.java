@@ -1,7 +1,8 @@
 package com.observatudo.backend.domain.model;
 
 import jakarta.persistence.*;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "eixo_usuario")
@@ -29,11 +30,7 @@ public class EixoUsuario extends EixoBaseImpl {
             @JoinColumn(name = "indicador_cod_indicador", referencedColumnName = "cod_indicador")
         }
     )
-    private List<Indicador> indicadores;
-
-    // @ManyToMany(mappedBy = "indicadores")
-    // private List<EixoUsuario> eixoUsuarios;
-    
+    private Set<Indicador> indicadores = new HashSet<>();
 
     // Construtores
     public EixoUsuario() {}
@@ -68,12 +65,11 @@ public class EixoUsuario extends EixoBaseImpl {
         this.eixo = eixo;
     }
 
-    public List<Indicador> getIndicadores() {
+    public Set<Indicador> getIndicadores() {
         return indicadores;
     }
 
-    public void setIndicadores(List<Indicador> indicadores) {
+    public void setIndicadores(Set<Indicador> indicadores) {
         this.indicadores = indicadores;
     }
 }
-

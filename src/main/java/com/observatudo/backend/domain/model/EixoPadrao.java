@@ -1,7 +1,7 @@
 package com.observatudo.backend.domain.model;
 
 import jakarta.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "eixo_padrao")
@@ -25,13 +25,13 @@ public class EixoPadrao extends EixoBaseImpl {
             @JoinColumn(name = "indicador_cod_indicador", referencedColumnName = "cod_indicador")
         }
     )
-    private List<Indicador> indicadores;
+    private Set<Indicador> indicadores;
     
 
     // Construtores
     public EixoPadrao() {}
 
-    public EixoPadrao(Eixo eixo, List<Indicador> indicadores) {
+    public EixoPadrao(Eixo eixo, Set<Indicador> indicadores) {
         this.eixo = eixo;
         this.indicadores = indicadores;
     }
@@ -53,11 +53,11 @@ public class EixoPadrao extends EixoBaseImpl {
         this.eixo = eixo;
     }
 
-    public List<Indicador> getIndicadores() {
+    public Set<Indicador> getIndicadores() {
         return indicadores;
     }
 
-    public void setIndicadores(List<Indicador> indicadores) {
+    public void setIndicadores(Set<Indicador> indicadores) {
         this.indicadores = indicadores;
     }
 }
