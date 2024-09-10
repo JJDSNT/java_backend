@@ -1,7 +1,6 @@
 package com.observatudo.backend.domain.model;
 
 import jakarta.persistence.*;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -27,8 +26,7 @@ public class Eixo {
     @Column(name = "cor", nullable = false)
     private String cor;
 
-    // Relacionamentos comentados (descomentar e ajustar conforme necessário)
-
+    // Relacionamento ManyToMany com Indicadores
     @ManyToMany
     @JoinTable(
         name = "indicador_eixo",
@@ -38,69 +36,18 @@ public class Eixo {
             @JoinColumn(name = "indicador_cod_indicador")
         }
     )
-    private Set<Indicador> indicadores;
+    private Set<Indicador> indicadores = new HashSet<>();
 
+    // Relacionamento com EixoPadrao
     @OneToMany(mappedBy = "eixo", cascade = CascadeType.ALL)
     private List<EixoPadrao> eixoPadrao;
 
+    // Relacionamento com EixoUsuario
     @OneToMany(mappedBy = "eixo", cascade = CascadeType.ALL)
     private List<EixoUsuario> eixosUsuario;
 
-    @ManyToMany
-    @JoinTable(
-        name = "indicador_eixo_padrao",
-        joinColumns = @JoinColumn(name = "eixo_id"),
-        inverseJoinColumns = {
-            @JoinColumn(name = "indicador_fonte_id"),
-            @JoinColumn(name = "indicador_cod_indicador")
-        }
-    )
-    private Set<Indicador> indicadorPadrao;
-
-    @ManyToMany
-    @JoinTable(
-        name = "indicador_eixo_usuario",
-        joinColumns = @JoinColumn(name = "eixo_id"),
-        inverseJoinColumns = {
-            @JoinColumn(name = "indicador_fonte_id"),
-            @JoinColumn(name = "indicador_cod_indicador")
-        }
-    )
-    private Set<Indicador> indicadoresUsuario;
-
-    // @ManyToMany
-    // @JoinTable(
-    //     name = "indicador_eixo",
-    //     joinColumns = @JoinColumn(name = "eixo_id"),
-    //     inverseJoinColumns = @JoinColumn(name = "indicador_id")
-    // )
-    // private List<Indicador> indicadores;
-
-    // @OneToMany(mappedBy = "eixo", cascade = CascadeType.ALL)
-    // private List<EixoPadrao> eixoPadrao;
-
-    // @OneToMany(mappedBy = "eixo", cascade = CascadeType.ALL)
-    // private List<EixoUsuario> eixosUsuario;
-
-    // @ManyToMany
-    // @JoinTable(
-    //     name = "indicador_eixo_padrao",
-    //     joinColumns = @JoinColumn(name = "eixo_id"),
-    //     inverseJoinColumns = @JoinColumn(name = "indicador_id")
-    // )
-    // private List<Indicador> indicadorPadrao;
-
-    // @ManyToMany
-    // @JoinTable(
-    //     name = "indicador_eixo_usuario",
-    //     joinColumns = @JoinColumn(name = "eixo_id"),
-    //     inverseJoinColumns = @JoinColumn(name = "indicador_id")
-    // )
-    // private List<Indicador> indicadoresUsuario;
-
     // Construtores
-    public Eixo() {
-    }
+    public Eixo() {}
 
     public Eixo(Eixos id, String nome, String nomeLegivel, String icon, String cor) {
         this.id = id;
@@ -110,13 +57,10 @@ public class Eixo {
         this.cor = cor;
     }
 
+    // Método para adicionar Indicador, garantindo sincronização bidirecional
     public void addIndicador(Indicador indicador) {
-        if (this.indicadores == null) {
-            this.indicadores = new HashSet<Indicador>(); // Especificar explicitamente o tipo
-        }
-        if (!this.indicadores.contains(indicador)) {
-            this.indicadores.add(indicador);
-            indicador.addEixo(this); // Chama o método no indicador para manter a sincronização
+        if (indicadores.add(indicador)) {
+            indicador.addEixo(this); // Sincroniza o lado de Indicador
         }
     }
 
@@ -185,25 +129,8 @@ public class Eixo {
         this.eixosUsuario = eixosUsuario;
     }
 
-    public Set<Indicador> getIndicadorPadrao() {
-        return indicadorPadrao;
-    }
-
-    public void setIndicadorPadrao(Set<Indicador> indicadorPadrao) {
-        this.indicadorPadrao = indicadorPadrao;
-    }
-
-    public Set<Indicador> getIndicadoresUsuario() {
-        return indicadoresUsuario;
-    }
-
-    public void setIndicadoresUsuario(Set<Indicador> indicadoresUsuario) {
-        this.indicadoresUsuario = indicadoresUsuario;
-    }
-
     // Método para obter todos os indicadores
     public Set<Indicador> getTodosIndicadores() {
-        return this.indicadorPadrao;
+        return this.indicadores;
     }
-
 }
