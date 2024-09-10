@@ -13,8 +13,13 @@ import com.observatudo.backend.domain.dto.EixoDTO;
 import com.observatudo.backend.domain.dto.IndicadorDTO;
 import com.observatudo.backend.service.EixoService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/api/eixos")
+@Tag(name = "Eixos", description = "Operações relacionadas a eixos")
 public class EixoController {
 
     private final EixoService eixoService;
@@ -24,6 +29,8 @@ public class EixoController {
     }
 
     // Endpoint para listar todos os eixos
+    @Operation(summary = "Lista todos os eixos", description = "Retorna a lista de todos os eixos disponíveis no sistema.")
+    @ApiResponse(responseCode = "200", description = "Eixos retornados com sucesso")
     @GetMapping
     public ResponseEntity<List<EixoDTO>> listarEixos() {
         List<EixoDTO> eixos = eixoService.listarEixos();
@@ -31,6 +38,8 @@ public class EixoController {
     }
 
     // Endpoint para listar todos os eixos com seus respectivos indicadores
+    @Operation(summary = "Lista eixos com seus indicadores", description = "Retorna todos os eixos e os respectivos indicadores.")
+    @ApiResponse(responseCode = "200", description = "Eixos e indicadores retornados com sucesso")
     @GetMapping("/com-indicadores")
     public ResponseEntity<List<EixoDTO>> listarEixosComIndicadores() {
         List<EixoDTO> eixos = eixoService.listarEixosComIndicadores();
