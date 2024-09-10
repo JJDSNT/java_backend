@@ -1,5 +1,6 @@
 package com.observatudo.backend.service;
 
+import com.observatudo.backend.domain.dto.EixoComIndicadoresDTO;
 import com.observatudo.backend.domain.dto.IndicadorDTO;
 import com.observatudo.backend.domain.dto.ResumoIndicadorDTO;
 import com.observatudo.backend.domain.model.*;
@@ -11,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
@@ -61,6 +63,23 @@ public class IndicadorService {
 
         return resumo;
     }
+
+    public List<EixoComIndicadoresDTO> listarIndicadoresPorEixo() {
+        List<Indicador> indicadores = indicadorRepository.findAll();
+    
+        // "Achatando" os eixos para agrupar corretamente
+        Map<EixoPadrao, List<Indicador>> indicadoresAgrupadosPorEixo = indicadores.stream()
+            .flatMap(indicador -> indicador.getEixosPadrao().stream()
+                .map(eixoPadrao -> new AbstractMap.SimpleEntry<>(eixoPadrao, indicador)))
+            .collect(Collectors.groupingBy(Map.Entry::getKey, 
+                                           Collectors.mapping(Map.Entry::getValue, Collectors.toList())));
+    
+        // Convertendo para o DTO final
+        return indicadoresAgrupadosPorEixo.entrySet().stream()
+            .map(entry -> new EixoComIndicadoresDTO(entry.getKey(), entry.getValue()))
+            .collect(Collectors.toList());
+    }
+    
 
     public EixoBase getEixoByUsuarioId(Long usuarioId) {
         return usuarioRepository.findById(usuarioId)

@@ -9,9 +9,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.observatudo.backend.domain.dto.EixoCaracteristicasDTO;
+import com.observatudo.backend.domain.dto.EixoComIndicadoresDTO;
 import com.observatudo.backend.domain.dto.EixoDTO;
 import com.observatudo.backend.domain.dto.IndicadorDTO;
 import com.observatudo.backend.service.EixoService;
+import com.observatudo.backend.service.IndicadorService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,9 +25,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class EixoController {
 
     private final EixoService eixoService;
+    private final IndicadorService indicadorService;
 
-    public EixoController(EixoService eixoService) {
+    public EixoController(EixoService eixoService, IndicadorService indicadorService) {
         this.eixoService = eixoService;
+        this.indicadorService = indicadorService;
     }
 
     // Endpoint para listar todos os eixos
@@ -44,6 +48,14 @@ public class EixoController {
     public ResponseEntity<List<EixoDTO>> listarEixosComIndicadores() {
         List<EixoDTO> eixos = eixoService.listarEixosComIndicadores();
         return ResponseEntity.ok(eixos);
+    }
+
+    @Operation(summary = "Lista indicadores agrupados por eixo", description = "Retorna todos os indicadores, organizados por seus respectivos eixos.")
+    @ApiResponse(responseCode = "200", description = "Indicadores listados com sucesso")
+    @GetMapping("/indicadores")
+    public ResponseEntity<List<EixoComIndicadoresDTO>> listarIndicadoresPorEixo() {
+        List<EixoComIndicadoresDTO> eixosComIndicadores = indicadorService.listarIndicadoresPorEixo();
+        return ResponseEntity.ok(eixosComIndicadores);
     }
 
     // Endpoint para listar todos os eixos com suas características

@@ -67,6 +67,10 @@ public class EixoPadrao extends EixoBaseImpl {
         this.eixo = eixo;
     }
 
+    public String getNome() {
+        return eixo.getNome(); 
+    }
+
     public Set<Indicador> getIndicadores() {
         return indicadores;
     }
