@@ -1,5 +1,7 @@
 package com.observatudo.backend.domain.dto;
 
+import com.observatudo.backend.domain.model.Indicador;
+
 public class IndicadorDTO {
 
     private String fonteNome;
@@ -9,6 +11,13 @@ public class IndicadorDTO {
 
     public IndicadorDTO() {
         // Construtor padrão
+    }
+
+    public IndicadorDTO(Indicador indicador) {
+        this.codIndicador = indicador.getCodIndicador();
+        this.nome = indicador.getNome();
+        this.descricao = indicador.getDescricao();
+        this.fonteNome = indicador.getFonte().getNome();
     }
 
     public IndicadorDTO(String fonteNome, String codIndicador, String nome, String descricao) {
