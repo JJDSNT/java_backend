@@ -3,9 +3,6 @@ package com.observatudo.backend.domain.repository;
 import com.observatudo.backend.domain.model.Eixo;
 import com.observatudo.backend.domain.model.Indicador;
 import com.observatudo.backend.domain.model.IndicadorId;
-import com.observatudo.backend.domain.model.Localidade;
-import com.observatudo.backend.domain.model.ValorIndicador;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
