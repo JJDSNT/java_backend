@@ -11,7 +11,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.text.ParseException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,8 +109,6 @@ public class CidadesSustentaveisLoader extends BaseIndicadorLoaderStrategy {
             } else {
                 logger.warn("Cidade não encontrada para o código IBGE: " + codigoIbge);
             }
-        } catch (ParseException e) {
-            logger.error("Erro ao processar data no formato: " + e.getMessage(), e);
         } catch (NumberFormatException e) {
             logger.error("Erro ao converter número: " + e.getMessage(), e);
         }
