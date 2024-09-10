@@ -1,5 +1,7 @@
 package com.observatudo.backend.domain.dto;
 
+import java.util.List;
+
 import com.observatudo.backend.domain.model.Eixo;
 import com.observatudo.backend.domain.model.Eixos;
 
@@ -7,6 +9,7 @@ public class EixoDTO {
     private Eixos id;
     private String nome;
     private String nomeLegivel;
+    private List<IndicadorDTO> indicadores; 
 
     public EixoDTO(Eixo eixo) {
         this.id = eixo.getId();
@@ -36,6 +39,10 @@ public class EixoDTO {
 
     public void setNomeLegivel(String nomeLegivel) {
         this.nomeLegivel = nomeLegivel;
+    }
+
+    public void setIndicadores(List<IndicadorDTO> indicadores) {
+        this.indicadores = indicadores;
     }
 
 }
