@@ -8,6 +8,5 @@ import com.observatudo.backend.domain.model.Localidade;
 @Repository
 public interface LocalidadeRepository extends JpaRepository<Localidade, Integer> {
     // Métodos de consulta personalizados podem ser definidos aqui, se necessário
-    Localidade findById(Long id);
     Localidade findByCodigo(int codigo);
 }
