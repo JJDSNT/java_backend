@@ -1,5 +1,10 @@
+package com.observatudo.backend.domain.dto;
+
+import com.observatudo.backend.domain.model.Eixo;
+import com.observatudo.backend.domain.model.Eixos;
+
 public class EixoDTO {
-    private Long id;
+    private Eixos id;
     private String nome;
     private String nomeLegivel;
 
@@ -9,5 +14,28 @@ public class EixoDTO {
         this.nomeLegivel = eixo.getNomeLegivel();
     }
 
-    // Getters e setters
+    public Eixos getId() {
+        return id;
+    }
+
+    public void setId(Eixos id) {
+        this.id = id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getNomeLegivel() {
+        return nomeLegivel;
+    }
+
+    public void setNomeLegivel(String nomeLegivel) {
+        this.nomeLegivel = nomeLegivel;
+    }
+
 }
