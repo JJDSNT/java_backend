@@ -1,17 +1,22 @@
 package com.observatudo.backend.service;
 
+import com.observatudo.backend.domain.dto.EixoDTO;
 import com.observatudo.backend.domain.dto.IndicadorDTO;
 import com.observatudo.backend.domain.model.Eixo;
 import com.observatudo.backend.domain.model.EixoPadrao;
+import com.observatudo.backend.domain.model.Eixos;
 import com.observatudo.backend.domain.model.Indicador;
 import com.observatudo.backend.domain.repository.EixoPadraoRepository;
 import com.observatudo.backend.domain.repository.EixoRepository;
 import com.observatudo.backend.domain.repository.IndicadorRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class EixoService {
@@ -24,6 +29,8 @@ public class EixoService {
 
     @Autowired
     private final IndicadorRepository indicadorRepository;
+
+    private Eixos eixosId;
 
     public Eixo createEixo(Eixo eixo) {
         return eixoRepository.save(eixo);
@@ -41,8 +48,9 @@ public class EixoService {
     }
 
     // Método para listar os indicadores por eixo
+
     public List<IndicadorDTO> listarIndicadoresPorEixo(Long eixoId) {
-        Eixo eixo = eixoRepository.findById(eixoId)
+        Eixo eixo = eixoRepository.findById(eixosId)
                 .orElseThrow(() -> new EntityNotFoundException("Eixo não encontrado"));
         List<Indicador> indicadores = indicadorRepository.findByEixo(eixo);
         return indicadores.stream().map(indicador -> new IndicadorDTO(indicador)).collect(Collectors.toList());
