@@ -1,7 +1,7 @@
 package com.observatudo.backend.domain.model;
 
 import jakarta.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 @Entity
@@ -33,7 +33,7 @@ public class ValorIndicador {
     // private Localidade localidade;
 
     @Column(name = "data", insertable=false, updatable=false)
-    private Date data;
+    private LocalDate data;
 
     @Column(name = "valor")
     private double valor;
@@ -67,11 +67,11 @@ public class ValorIndicador {
         this.localidade = localidade;
     }
 
-    public Date getData() {
+    public LocalDate getData() {
         return data;
     }
 
-    public void setData(Date data) {
+    public void setData(LocalDate data) {
         this.data = data;
     }
 
