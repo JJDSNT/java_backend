@@ -9,8 +9,9 @@ package com.observatudo.backend.loader.indicadores.impl;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,12 +98,15 @@ public class CidadesSustentaveisLoader extends BaseIndicadorLoaderStrategy {
                 ValorIndicador valorIndicador = new ValorIndicador();
                 valorIndicador.setIndicador(indicador);
                 valorIndicador.setLocalidade(cidade);
-                valorIndicador.setData(new SimpleDateFormat("dd/MM/yyyy").parse(anoPreenchimento)); // Ajuste conforme necessário
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                LocalDate data = LocalDate.parse(anoPreenchimento, formatter);
+                valorIndicador.setData(data);                                                                                  // necessário
                 valorIndicador.setValor(Double.parseDouble(valor.replace(',', '.'))); // Ajuste para o formato de número
                 valorIndicador.setJustificativa(justificativa);
 
                 // Salvar o valorIndicador no banco de dados
-                // valorIndicadorRepository.save(valorIndicador); // Se houver um repository para ValorIndicador
+                // valorIndicadorRepository.save(valorIndicador); // Se houver um repository
+                // para ValorIndicador
             } else {
                 logger.warn("Cidade não encontrada para o código IBGE: " + codigoIbge);
             }
