@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import com.observatudo.backend.domain.model.Eixos;
 import com.observatudo.backend.domain.model.Indicador;
 import com.observatudo.backend.domain.model.Localidade;
 import com.observatudo.backend.domain.model.ValorIndicador;
@@ -11,6 +13,7 @@ import com.observatudo.backend.domain.model.ValorIndicadorId;
 import com.observatudo.backend.domain.repository.IndicadorRepository;
 import com.observatudo.backend.domain.repository.ValorIndicadorRepository;
 import com.observatudo.backend.loader.indicadores.BaseIndicadorLoaderStrategy;
+import com.observatudo.backend.service.IndicadorService;
 import com.observatudo.backend.service.LocalidadeService;
 
 import java.util.Date;
@@ -33,6 +36,9 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
 
     @Autowired
     private LocalidadeService localidadeService;
+
+    @Autowired
+    private IndicadorService indicadorService;
 
     @Override
     public void loadIndicadores() {
@@ -106,9 +112,24 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
                 indicador.setDono(dono);
                 indicador.setEmail(email);
                 indicador.setCodIndicador(gerarCodIndicador()); // Gera o código do indicador
+
+                // Associa o eixo correto com base no nome do indicador
+                if ("Mortalidade Materna".equals(nomeIndicador) || "Mortalidade Infantil".equals(nomeIndicador)) {
+                    indicador.setEixo(Eixos.SAUDE);
+                } else if ("Taxa de Desemprego".equals(nomeIndicador)) {
+                    indicador.setEixo(Eixos.ECONOMIA);
+                } else {
+                    indicador.setEixo(Eixos.PERSONALIZADO); // Definido como personalizado caso o indicador não se
+                                                            // enquadre
+                }
+
                 // Salva o Indicador
                 indicador = indicadorRepository.save(indicador);
                 logger.info("Indicador criado e salvo: {}", nomeIndicador);
+
+                // Associa o indicador a um eixo
+                indicadorService.associarIndicadorAoEixo(indicador.getId(), null); // Considerando que pode não ter um
+                                                                                   // usuário
             } else {
                 logger.info("Indicador já existe: {}", nomeIndicador);
             }
