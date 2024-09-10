@@ -7,9 +7,26 @@ public class IndicadorValorDTO {
     private Double valor;
 
     public IndicadorValorDTO(ValorIndicador indicadorValor) {
-        this.nomeIndicador = indicadorValor.getIndicador().getNome();
-        this.valor = indicadorValor.getValor();
+        if (indicadorValor != null && indicadorValor.getIndicador() != null) {
+            this.nomeIndicador = indicadorValor.getIndicador().getNome();
+            this.valor = indicadorValor.getValor();
+        }
     }
 
     // Getters e setters
+    public String getNomeIndicador() {
+        return nomeIndicador;
+    }
+
+    public void setNomeIndicador(String nomeIndicador) {
+        this.nomeIndicador = nomeIndicador;
+    }
+
+    public Double getValor() {
+        return valor;
+    }
+
+    public void setValor(Double valor) {
+        this.valor = valor;
+    }
 }
