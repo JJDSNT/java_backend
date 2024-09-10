@@ -1,31 +1,37 @@
 package com.observatudo.backend.controller;
 
 import com.observatudo.backend.domain.dto.IndicadorDTO;
+import com.observatudo.backend.domain.model.Indicador;
 import com.observatudo.backend.service.IndicadorService;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/indicadores")
+@RequestMapping("/indicadores")
 public class IndicadorController {
 
-    @Autowired
-    private IndicadorService indicadorService;
+    private final IndicadorService indicadorService;
 
-    @GetMapping
-    public ResponseEntity<List<IndicadorDTO>> listarIndicadores() {
-        List<IndicadorDTO> indicadores = indicadorService.listarIndicadores();
-        return new ResponseEntity<>(indicadores, HttpStatus.OK);
+    @Autowired
+    public IndicadorController(IndicadorService indicadorService) {
+        this.indicadorService = indicadorService;
     }
 
-    // @PostMapping
-    // public ResponseEntity<IndicadorDTO> adicionarIndicador(@RequestBody IndicadorDTO indicadorDTO) {
-    //     IndicadorDTO novoIndicador = indicadorService.adicionarIndicador(indicadorDTO);
-    //     return new ResponseEntity<>(novoIndicador, HttpStatus.CREATED);
-    // }
+    @GetMapping
+    public List<IndicadorDTO> listarIndicadores() {
+        List<Indicador> indicadores = indicadorService.listarIndicadores();
+        return indicadores.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private IndicadorDTO convertToDTO(Indicador indicador) {
+        String fonteNome = indicador.getFonte() != null ? indicador.getFonte().getNome() : null;
+        return new IndicadorDTO(fonteNome, indicador.getCodIndicador(), indicador.getNome(), indicador.getDescricao());
+    }
 }
