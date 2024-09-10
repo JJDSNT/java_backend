@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,6 +75,7 @@ public class IndicadorService {
         }
     }
 
+    @SuppressWarnings("unused")
     public void setEixoParaIndicador(Integer fonteId, String codIndicador, Long usuarioId, Eixo eixoSelecionado) {
         IndicadorId indicadorId = new IndicadorId(fonteId, codIndicador);
         Indicador indicador = indicadorRepository.findById(indicadorId)
@@ -90,10 +90,11 @@ public class IndicadorService {
                 .orElseThrow(() -> new EntityNotFoundException("Indicador não encontrado"));
 
         List<EixoBase> todosEixos = eixoUsuarioRepository.findAll().stream()
-                .map(EixoUsuario::getEixo)
+                .map(eixoUsuario -> (EixoBase) eixoUsuario)
                 .collect(Collectors.toList());
+
         todosEixos.addAll(eixoPadraoRepository.findAll().stream()
-                .map(EixoPadrao::getEixo)
+                .map(eixoPadrao -> (EixoBase) eixoPadrao)
                 .collect(Collectors.toList()));
 
         for (EixoBase eixo : todosEixos) {
