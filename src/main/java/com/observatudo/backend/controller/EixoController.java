@@ -1,6 +1,5 @@
 package com.observatudo.backend.controller;
 
-
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -9,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.observatudo.backend.domain.dto.EixoCaracteristicasDTO;
 import com.observatudo.backend.domain.dto.EixoDTO;
 import com.observatudo.backend.domain.dto.IndicadorDTO;
 import com.observatudo.backend.service.EixoService;
@@ -27,6 +27,20 @@ public class EixoController {
     @GetMapping
     public ResponseEntity<List<EixoDTO>> listarEixos() {
         List<EixoDTO> eixos = eixoService.listarEixos();
+        return ResponseEntity.ok(eixos);
+    }
+
+    // Endpoint para listar todos os eixos com seus respectivos indicadores
+    @GetMapping("/com-indicadores")
+    public ResponseEntity<List<EixoDTO>> listarEixosComIndicadores() {
+        List<EixoDTO> eixos = eixoService.listarEixosComIndicadores();
+        return ResponseEntity.ok(eixos);
+    }
+
+    // Endpoint para listar todos os eixos com suas características
+    @GetMapping("/caracteristicas")
+    public ResponseEntity<List<EixoCaracteristicasDTO>> listarCaracteristicasEixos() {
+        List<EixoCaracteristicasDTO> eixos = eixoService.listarCaracteristicasEixos();
         return ResponseEntity.ok(eixos);
     }
 
