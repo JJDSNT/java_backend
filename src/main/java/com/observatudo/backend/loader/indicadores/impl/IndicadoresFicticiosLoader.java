@@ -10,6 +10,8 @@ import com.observatudo.backend.domain.model.Indicador;
 import com.observatudo.backend.domain.model.Localidade;
 import com.observatudo.backend.domain.model.ValorIndicador;
 import com.observatudo.backend.domain.model.ValorIndicadorId;
+import com.observatudo.backend.domain.model.Eixo;
+import com.observatudo.backend.domain.repository.EixoRepository;
 import com.observatudo.backend.domain.repository.IndicadorRepository;
 import com.observatudo.backend.domain.repository.ValorIndicadorRepository;
 import com.observatudo.backend.loader.indicadores.BaseIndicadorLoaderStrategy;
@@ -39,6 +41,9 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
 
     @Autowired
     private IndicadorService indicadorService;
+
+    @Autowired
+    private EixoRepository eixoRepository;  // Repositório para buscar o Eixo
 
     @Override
     public void loadIndicadores() {
@@ -96,14 +101,11 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
                 indicador.setEmail(email);
                 indicador.setCodIndicador(gerarCodIndicador());
 
-                // Associa o eixo correto com base no nome do indicador
-                if ("Mortalidade Materna".equals(nomeIndicador) || "Mortalidade Infantil".equals(nomeIndicador)) {
-                    indicador.addEixo(Eixos.SAUDE); // Usar o método addEixo
-                } else if ("Taxa de Desemprego".equals(nomeIndicador)) {
-                    indicador.addEixo(Eixos.ECONOMIA); // Usar o método addEixo
-                } else {
-                    indicador.addEixo(Eixos.PERSONALIZADO); // Definir como personalizado caso não se enquadre
-                }
+                // Busca o eixo correto com base no enum Eixos
+                Eixo eixo = buscarEixo(obterEixoPeloNomeIndicador(nomeIndicador));
+
+                // Adicionar o eixo ao indicador
+                indicador.addEixo(eixo);
 
                 indicador = indicadorRepository.save(indicador);
                 logger.info("Indicador criado e salvo: {}", nomeIndicador);
@@ -134,6 +136,23 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
             }
         } catch (Exception e) {
             logger.error("Erro ao processar linha: {}", e.getMessage(), e);
+        }
+    }
+
+    // Método para buscar o Eixo no banco de dados baseado no enum Eixos
+    private Eixo buscarEixo(Eixos eixoEnum) {
+        return eixoRepository.findByNome(eixoEnum.name())
+                .orElseThrow(() -> new RuntimeException("Eixo não encontrado para o enum: " + eixoEnum));
+    }
+
+    // Método para mapear o nome do indicador para o enum Eixos
+    private Eixos obterEixoPeloNomeIndicador(String nomeIndicador) {
+        if ("Mortalidade Materna".equals(nomeIndicador) || "Mortalidade Infantil".equals(nomeIndicador)) {
+            return Eixos.SAUDE;
+        } else if ("Taxa de Desemprego".equals(nomeIndicador)) {
+            return Eixos.ECONOMIA;
+        } else {
+            return Eixos.PERSONALIZADO;  // Definir como personalizado para outros indicadores
         }
     }
 
