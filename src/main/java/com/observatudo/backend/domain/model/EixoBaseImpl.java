@@ -2,9 +2,16 @@ package com.observatudo.backend.domain.model;
 
 import java.util.Set;
 
-public abstract class EixoBaseImpl implements EixoBase {
-    protected Eixo eixo;
-    protected Set<Indicador> indicadores;
+public class EixoBaseImpl implements EixoBase {
+
+    private Eixo eixo;
+    private Set<Indicador> indicadores;
+
+    // Construtor para injeção de dependências
+    public EixoBaseImpl(Eixo eixo, Set<Indicador> indicadores) {
+        this.eixo = eixo;
+        this.indicadores = indicadores;
+    }
 
     @Override
     public Eixo getEixo() {
@@ -16,5 +23,5 @@ public abstract class EixoBaseImpl implements EixoBase {
         return this.indicadores;
     }
 
-    // Outros métodos comuns, se necessário
+    // Outros métodos auxiliares podem ser adicionados conforme a lógica do seu sistema
 }
