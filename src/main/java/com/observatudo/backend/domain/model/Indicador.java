@@ -1,7 +1,6 @@
 package com.observatudo.backend.domain.model;
 
 import jakarta.persistence.*;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,35 +36,49 @@ public class Indicador {
     private String email;
 
     @ManyToMany
-    @JoinTable(name = "indicador_eixo", joinColumns = {
+    @JoinTable(
+        name = "indicador_eixo",
+        joinColumns = {
             @JoinColumn(name = "indicador_fonte_id", referencedColumnName = "fonte_id"),
             @JoinColumn(name = "indicador_cod_indicador", referencedColumnName = "cod_indicador")
-    }, inverseJoinColumns = @JoinColumn(name = "eixo_id"))
-    private List<Eixo> eixos;
+        },
+        inverseJoinColumns = @JoinColumn(name = "eixo_id"),
+        foreignKey = @ForeignKey(name = "fk_indicador_eixo")
+    )
+    private List<Eixo> eixos = new ArrayList<>();
 
     @ManyToMany
-    @JoinTable(name = "indicador_eixo_padrao", joinColumns = {
+    @JoinTable(
+        name = "indicador_eixo_padrao",
+        joinColumns = {
             @JoinColumn(name = "indicador_fonte_id", referencedColumnName = "fonte_id"),
             @JoinColumn(name = "indicador_cod_indicador", referencedColumnName = "cod_indicador")
-    }, inverseJoinColumns = @JoinColumn(name = "eixo_padrao_id"))
-    private List<EixoPadrao> eixoPadrao;
+        },
+        inverseJoinColumns = @JoinColumn(name = "eixo_padrao_id"),
+        foreignKey = @ForeignKey(name = "fk_indicador_eixo_padrao")
+    )
+    private List<EixoPadrao> eixoPadrao = new ArrayList<>();
 
     @ManyToMany
-    @JoinTable(name = "indicador_eixo_usuario", joinColumns = {
+    @JoinTable(
+        name = "indicador_eixo_usuario",
+        joinColumns = {
             @JoinColumn(name = "indicador_fonte_id", referencedColumnName = "fonte_id"),
             @JoinColumn(name = "indicador_cod_indicador", referencedColumnName = "cod_indicador")
-    }, inverseJoinColumns = @JoinColumn(name = "eixo_usuario_id"))
-    private List<EixoUsuario> eixosUsuario;
+        },
+        inverseJoinColumns = @JoinColumn(name = "eixo_usuario_id"),
+        foreignKey = @ForeignKey(name = "fk_indicador_eixo_usuario")
+    )
+    private List<EixoUsuario> eixosUsuario = new ArrayList<>();
 
     @OneToMany(mappedBy = "indicador", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ValorIndicador> valoresIndicador;
+    private List<ValorIndicador> valoresIndicador = new ArrayList<>();
 
     // Construtores
     public Indicador() {
     }
 
-    public Indicador(Integer fonteId, String codIndicador, String nome, String descricao, Fonte fonte, String dono,
-            String email) {
+    public Indicador(Integer fonteId, String codIndicador, String nome, String descricao, Fonte fonte, String dono, String email) {
         this.fonteId = fonte.getId();
         this.codIndicador = codIndicador;
         this.nome = nome;
@@ -76,12 +89,9 @@ public class Indicador {
     }
 
     public void addEixo(Eixo eixo) {
-        if (this.eixos == null) {
-            this.eixos = new ArrayList<>();
-        }
         if (!this.eixos.contains(eixo)) {
             this.eixos.add(eixo);
-            eixo.addIndicador(this); // Chama o método no eixo para manter a sincronização
+            eixo.addIndicador(this); // Sincroniza o lado do Eixo
         }
     }
 
@@ -178,7 +188,7 @@ public class Indicador {
         this.valoresIndicador = valoresIndicador;
     }
 
-    // Métodos adicionais
+    // Método para obter valor por data
     public double getValor(Date data) {
         return valoresIndicador.stream()
                 .filter(valor -> valor.getData().equals(data))
@@ -187,13 +197,11 @@ public class Indicador {
                 .orElse(0.0);
     }
 
-    // Equals e HashCode (baseados na chave composta)
+    // Equals e HashCode baseados na chave composta
     @Override
     public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
         Indicador that = (Indicador) o;
         return fonteId.equals(that.fonteId) && codIndicador.equals(that.codIndicador);
     }
