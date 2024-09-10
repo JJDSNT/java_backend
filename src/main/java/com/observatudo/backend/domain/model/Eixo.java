@@ -1,7 +1,7 @@
 package com.observatudo.backend.domain.model;
 
 import jakarta.persistence.*;
-//import java.util.List;
+import java.util.List;
 
 @Entity
 @Table(name = "eixo")
@@ -9,7 +9,7 @@ public class Eixo {
 
     @Id
     @Column(name = "id", nullable = false)
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING) // Se Eixos for um Enum com valores textuais
     private Eixos id;
 
     @Column(name = "nome", nullable = false)
@@ -24,23 +24,37 @@ public class Eixo {
     @Column(name = "cor", nullable = false)
     private String cor;
 
-    // @ManyToMany
-    // @JoinTable(name = "indicador_eixo", joinColumns = @JoinColumn(name = "eixo_id"), inverseJoinColumns = @JoinColumn(name = "indicador_id"))
-    // private List<Indicador> indicadores;
+    // Relacionamentos comentados (descomentar e ajustar conforme necessário)
 
-    // @OneToMany(mappedBy = "eixo", cascade = CascadeType.ALL)
-    // private List<EixoPadrao> eixoPadrao;
+    @ManyToMany
+    @JoinTable(
+        name = "indicador_eixo",
+        joinColumns = @JoinColumn(name = "eixo_id"),
+        inverseJoinColumns = @JoinColumn(name = "indicador_id")
+    )
+    private List<Indicador> indicadores;
 
-    // @OneToMany(mappedBy = "eixo", cascade = CascadeType.ALL)
-    // private List<EixoUsuario> eixosUsuario;
+    @OneToMany(mappedBy = "eixo", cascade = CascadeType.ALL)
+    private List<EixoPadrao> eixoPadrao;
 
-    // @ManyToMany
-    // @JoinTable(name = "indicador_eixo_padrao", joinColumns = @JoinColumn(name = "eixo_id"), inverseJoinColumns = @JoinColumn(name = "indicador_id"))
-    // private List<Indicador> indicadorPadrao;
+    @OneToMany(mappedBy = "eixo", cascade = CascadeType.ALL)
+    private List<EixoUsuario> eixosUsuario;
 
-    // @ManyToMany
-    // @JoinTable(name = "indicador_eixo_usuario", joinColumns = @JoinColumn(name = "eixo_id"), inverseJoinColumns = @JoinColumn(name = "indicador_id"))
-    // private List<Indicador> indicadoresUsuario;
+    @ManyToMany
+    @JoinTable(
+        name = "indicador_eixo_padrao",
+        joinColumns = @JoinColumn(name = "eixo_id"),
+        inverseJoinColumns = @JoinColumn(name = "indicador_id")
+    )
+    private List<Indicador> indicadorPadrao;
+
+    @ManyToMany
+    @JoinTable(
+        name = "indicador_eixo_usuario",
+        joinColumns = @JoinColumn(name = "eixo_id"),
+        inverseJoinColumns = @JoinColumn(name = "indicador_id")
+    )
+    private List<Indicador> indicadoresUsuario;
 
     // Construtores
     public Eixo() {
@@ -95,49 +109,49 @@ public class Eixo {
         this.cor = cor;
     }
 
-    // public List<Indicador> getIndicadores() {
-    //     return indicadores;
-    // }
+    public List<Indicador> getIndicadores() {
+        return indicadores;
+    }
 
-    // public void setIndicadores(List<Indicador> indicadores) {
-    //     this.indicadores = indicadores;
-    // }
+    public void setIndicadores(List<Indicador> indicadores) {
+        this.indicadores = indicadores;
+    }
 
-    // public List<EixoPadrao> getEixoPadrao() {
-    //     return eixoPadrao;
-    // }
+    public List<EixoPadrao> getEixoPadrao() {
+        return eixoPadrao;
+    }
 
-    // public void setEixoPadrao(List<EixoPadrao> eixoPadrao) {
-    //     this.eixoPadrao = eixoPadrao;
-    // }
+    public void setEixoPadrao(List<EixoPadrao> eixoPadrao) {
+        this.eixoPadrao = eixoPadrao;
+    }
 
-    // public List<EixoUsuario> getEixosUsuario() {
-    //     return eixosUsuario;
-    // }
+    public List<EixoUsuario> getEixosUsuario() {
+        return eixosUsuario;
+    }
 
-    // public void setEixosUsuario(List<EixoUsuario> eixosUsuario) {
-    //     this.eixosUsuario = eixosUsuario;
-    // }
+    public void setEixosUsuario(List<EixoUsuario> eixosUsuario) {
+        this.eixosUsuario = eixosUsuario;
+    }
 
-    // public List<Indicador> getIndicadorPadrao() {
-    //     return indicadorPadrao;
-    // }
+    public List<Indicador> getIndicadorPadrao() {
+        return indicadorPadrao;
+    }
 
-    // public void setIndicadorPadrao(List<Indicador> indicadorPadrao) {
-    //     this.indicadorPadrao = indicadorPadrao;
-    // }
+    public void setIndicadorPadrao(List<Indicador> indicadorPadrao) {
+        this.indicadorPadrao = indicadorPadrao;
+    }
 
-    // public List<Indicador> getIndicadoresUsuario() {
-    //     return indicadoresUsuario;
-    // }
+    public List<Indicador> getIndicadoresUsuario() {
+        return indicadoresUsuario;
+    }
 
-    // public void setIndicadoresUsuario(List<Indicador> indicadoresUsuario) {
-    //     this.indicadoresUsuario = indicadoresUsuario;
-    // }
+    public void setIndicadoresUsuario(List<Indicador> indicadoresUsuario) {
+        this.indicadoresUsuario = indicadoresUsuario;
+    }
 
-    // // Método para obter todos os indicadores
-    // public List<Indicador> getTodosIndicadores() {
-    //     return this.indicadorPadrao;
-    // }
+    // Método para obter todos os indicadores
+    public List<Indicador> getTodosIndicadores() {
+        return this.indicadorPadrao;
+    }
 
 }
