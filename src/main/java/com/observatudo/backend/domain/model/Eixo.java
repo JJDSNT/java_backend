@@ -1,6 +1,8 @@
 package com.observatudo.backend.domain.model;
 
 import jakarta.persistence.*;
+
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -106,6 +108,16 @@ public class Eixo {
         this.nomeLegivel = nomeLegivel;
         this.icon = icon;
         this.cor = cor;
+    }
+
+    public void addIndicador(Indicador indicador) {
+        if (this.indicadores == null) {
+            this.indicadores = new HashSet<Indicador>(); // Especificar explicitamente o tipo
+        }
+        if (!this.indicadores.contains(indicador)) {
+            this.indicadores.add(indicador);
+            indicador.addEixo(this); // Chama o método no indicador para manter a sincronização
+        }
     }
 
     // Getters e Setters
