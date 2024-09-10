@@ -4,7 +4,6 @@ import com.observatudo.backend.domain.dto.IndicadorDTO;
 import com.observatudo.backend.domain.dto.ResumoIndicadorDTO;
 import com.observatudo.backend.domain.model.Indicador;
 import com.observatudo.backend.service.IndicadorService;
-import com.observatudo.backend.service.ResumoIndicadorService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
@@ -27,9 +26,6 @@ public class IndicadorController {
     private final IndicadorService indicadorService;
 
     @Autowired
-    private ResumoIndicadorService resumoIndicadorService;
-
-    @Autowired
     public IndicadorController(IndicadorService indicadorService) {
         this.indicadorService = indicadorService;
     }
@@ -49,7 +45,7 @@ public class IndicadorController {
 
     @GetMapping("/{codigoLocalidade}")
     public ResponseEntity<ResumoIndicadorDTO> obterResumoIndicadores(@PathVariable Integer codigoLocalidade) {
-        ResumoIndicadorDTO resumo = resumoIndicadorService.obterResumoIndicadores(codigoLocalidade);
+        ResumoIndicadorDTO resumo = indicadorService.obterResumoIndicadores(codigoLocalidade);
         return new ResponseEntity<>(resumo, HttpStatus.OK);
     }
 }
