@@ -1,5 +1,6 @@
 package com.observatudo.backend.domain.repository;
 
+import com.observatudo.backend.domain.model.Eixo;
 import com.observatudo.backend.domain.model.Indicador;
 import com.observatudo.backend.domain.model.IndicadorId;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +16,7 @@ public interface IndicadorRepository extends JpaRepository<Indicador, IndicadorI
 
     // Método para buscar indicadores com base em uma lista de códigos de indicadores e um ID de fonte
     List<Indicador> findByFonteIdAndCodIndicadorIn(Integer fonteId, List<String> codIndicadores);
+
+     List<Indicador> findByEixo(Eixo eixo);
+
 }
