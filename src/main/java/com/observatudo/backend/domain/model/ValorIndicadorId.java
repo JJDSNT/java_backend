@@ -1,7 +1,7 @@
 package com.observatudo.backend.domain.model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.Objects;
 
 import jakarta.persistence.Column;
@@ -20,12 +20,12 @@ public class ValorIndicadorId implements Serializable {
     private Integer localidadeId;
 
     @Column(name = "data")
-    private Date data;
+    private LocalDate data;
 
     // Construtores
     public ValorIndicadorId() {}
 
-    public ValorIndicadorId(Integer fonteId, String codIndicador, Integer localidadeId, Date data) {
+    public ValorIndicadorId(Integer fonteId, String codIndicador, Integer localidadeId, LocalDate data) {
         this.fonteId = fonteId;
         this.codIndicador = codIndicador;
         this.localidadeId = localidadeId;
@@ -57,11 +57,11 @@ public class ValorIndicadorId implements Serializable {
         this.localidadeId = localidadeId;
     }
 
-    public Date getData() {
+    public LocalDate getData() {
         return data;
     }
 
-    public void setData(Date data) {
+    public void setData(LocalDate data) {
         this.data = data;
     }
 
