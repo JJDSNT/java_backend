@@ -42,7 +42,13 @@
 		<dependency>
 			<groupId>com.opencsv</groupId>
 			<artifactId>opencsv</artifactId>
-			<version>5.5.2</version> <!-- Verifique a versão mais recente -->
+			<version>5.9</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- MapStruct -->
 		<dependency>
