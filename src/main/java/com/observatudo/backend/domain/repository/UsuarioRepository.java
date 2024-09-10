@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 import com.observatudo.backend.domain.model.Usuario;
 
 @Repository
-public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
+public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     // Métodos de consulta personalizados podem ser definidos aqui, se necessário
 }
