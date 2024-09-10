@@ -11,7 +11,6 @@ import com.observatudo.backend.domain.model.Localidade;
 import com.observatudo.backend.domain.model.ValorIndicador;
 import com.observatudo.backend.domain.model.ValorIndicadorId;
 import com.observatudo.backend.domain.model.Eixo;
-import com.observatudo.backend.domain.model.EixoBase;
 import com.observatudo.backend.domain.model.EixoPadrao;
 import com.observatudo.backend.domain.repository.EixoPadraoRepository;
 import com.observatudo.backend.domain.repository.EixoRepository;
@@ -23,9 +22,7 @@ import com.observatudo.backend.service.LocalidadeService;
 
 import jakarta.transaction.Transactional;
 
-import java.util.Date;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
@@ -93,11 +90,12 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
         }
 
         for (String[] line : lines) {
-        processLine(line);
+            processLine(line);
         }
 
-        // String[] testLine = { "2927408", "Mortalidade Materna", "2021-01-01", "35.4", "João Silva",
-        //         "joao.silva@exemplo.com" };
+        // String[] testLine = { "2927408", "Mortalidade Materna", "2021-01-01", "35.4",
+        // "João Silva",
+        // "joao.silva@exemplo.com" };
         // processLine(testLine);
 
     }
@@ -112,8 +110,7 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
             String email = line[5];
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-            LocalDate localDate = LocalDate.parse(dataStr, formatter);
-            Date data = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+            LocalDate data = LocalDate.parse(dataStr, formatter);
 
             Indicador indicador = indicadorRepository.findByNome(nomeIndicador);
             if (indicador == null) {
@@ -182,13 +179,13 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
     public EixoPadrao buscarEixoPadrao(Eixos eixoEnum) {
         // Log para depuração
         System.out.println("Buscando Eixo: " + eixoEnum.getNome());
-    
+
         // Busca o Eixo ignorando maiúsculas/minúsculas
         Eixo eixo = eixoRepository.findByNomeIgnoreCase(eixoEnum.getNome())
                 .orElseThrow(() -> new IllegalArgumentException("Eixo não encontrado: " + eixoEnum.getNome()));
-    
+
         System.out.println("Eixo encontrado: " + eixo.getNome());
-    
+
         // Busca o EixoPadrao com base no Eixo encontrado
         return eixoPadraoRepository.findByEixo(eixo)
                 .orElseGet(() -> {
@@ -199,7 +196,6 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
                     return novoEixoPadrao;
                 });
     }
-    
 
     // Método para mapear o nome do indicador para o enum Eixos
     private Eixos obterEixoPeloNomeIndicador(String nomeIndicador) {
