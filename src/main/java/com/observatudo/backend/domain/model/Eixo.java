@@ -2,6 +2,7 @@ package com.observatudo.backend.domain.model;
 
 import jakarta.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "eixo")
@@ -35,7 +36,7 @@ public class Eixo {
             @JoinColumn(name = "indicador_cod_indicador")
         }
     )
-    private List<Indicador> indicadores;
+    private Set<Indicador> indicadores;
 
     @OneToMany(mappedBy = "eixo", cascade = CascadeType.ALL)
     private List<EixoPadrao> eixoPadrao;
@@ -52,7 +53,7 @@ public class Eixo {
             @JoinColumn(name = "indicador_cod_indicador")
         }
     )
-    private List<Indicador> indicadorPadrao;
+    private Set<Indicador> indicadorPadrao;
 
     @ManyToMany
     @JoinTable(
@@ -63,7 +64,7 @@ public class Eixo {
             @JoinColumn(name = "indicador_cod_indicador")
         }
     )
-    private List<Indicador> indicadoresUsuario;
+    private Set<Indicador> indicadoresUsuario;
 
     // @ManyToMany
     // @JoinTable(
@@ -148,11 +149,11 @@ public class Eixo {
         this.cor = cor;
     }
 
-    public List<Indicador> getIndicadores() {
+    public Set<Indicador> getIndicadores() {
         return indicadores;
     }
 
-    public void setIndicadores(List<Indicador> indicadores) {
+    public void setIndicadores(Set<Indicador> indicadores) {
         this.indicadores = indicadores;
     }
 
@@ -172,24 +173,24 @@ public class Eixo {
         this.eixosUsuario = eixosUsuario;
     }
 
-    public List<Indicador> getIndicadorPadrao() {
+    public Set<Indicador> getIndicadorPadrao() {
         return indicadorPadrao;
     }
 
-    public void setIndicadorPadrao(List<Indicador> indicadorPadrao) {
+    public void setIndicadorPadrao(Set<Indicador> indicadorPadrao) {
         this.indicadorPadrao = indicadorPadrao;
     }
 
-    public List<Indicador> getIndicadoresUsuario() {
+    public Set<Indicador> getIndicadoresUsuario() {
         return indicadoresUsuario;
     }
 
-    public void setIndicadoresUsuario(List<Indicador> indicadoresUsuario) {
+    public void setIndicadoresUsuario(Set<Indicador> indicadoresUsuario) {
         this.indicadoresUsuario = indicadoresUsuario;
     }
 
     // Método para obter todos os indicadores
-    public List<Indicador> getTodosIndicadores() {
+    public Set<Indicador> getTodosIndicadores() {
         return this.indicadorPadrao;
     }
 
