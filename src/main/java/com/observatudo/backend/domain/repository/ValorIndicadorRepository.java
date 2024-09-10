@@ -11,5 +11,5 @@ import com.observatudo.backend.domain.model.ValorIndicador;
 public interface ValorIndicadorRepository extends JpaRepository<ValorIndicador, Long> {
     // Métodos de consulta personalizados podem ser definidos aqui, se necessário
     List<ValorIndicador> findByLocalidadeCodigo(Integer codigoLocalidade);
-    List<ValorIndicador> findByIndicadorCodigo(Integer codigoIndicador);
+    List<ValorIndicador> findByIndicadorCodIndicador(String codIndicador);
 }
