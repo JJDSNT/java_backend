@@ -1,5 +1,6 @@
 package com.observatudo.backend.service;
 
+import com.observatudo.backend.domain.dto.EixoCaracteristicasDTO;
 import com.observatudo.backend.domain.dto.EixoDTO;
 import com.observatudo.backend.domain.dto.IndicadorDTO;
 import com.observatudo.backend.domain.model.Eixo;
@@ -30,16 +31,12 @@ public class EixoService {
     @Autowired
     private final IndicadorRepository indicadorRepository;
 
-    private Eixos eixosId;
-
-    public Eixo createEixo(Eixo eixo) {
-        return eixoRepository.save(eixo);
-    }
-
     public EixoService(EixoRepository eixoRepository, IndicadorRepository indicadorRepository) {
         this.eixoRepository = eixoRepository;
         this.indicadorRepository = indicadorRepository;
     }
+
+    private Eixos eixosId;
 
     // Método para listar todos os eixos
     public List<EixoDTO> listarEixos() {
@@ -47,14 +44,34 @@ public class EixoService {
         return eixos.stream().map(eixo -> new EixoDTO(eixo)).collect(Collectors.toList());
     }
 
-    // Método para listar os indicadores por eixo
+    // Método para listar os eixos com seus respectivos indicadores
+    public List<EixoDTO> listarEixosComIndicadores() {
+        List<Eixo> eixos = eixoRepository.findAll();
+        return eixos.stream().map(eixo -> {
+            List<IndicadorDTO> indicadores = indicadorRepository.findByEixos(eixo)
+                    .stream()
+                    .map(IndicadorDTO::new)
+                    .collect(Collectors.toList());
+            EixoDTO eixoDTO = new EixoDTO(eixo);
+            eixoDTO.setIndicadores(indicadores);
+            return eixoDTO;
+        }).collect(Collectors.toList());
+    }
 
+    // Método para listar os eixos com suas características
+    public List<EixoCaracteristicasDTO> listarCaracteristicasEixos() {
+        List<Eixo> eixos = eixoRepository.findAll();
+        return eixos.stream().map(EixoCaracteristicasDTO::new).collect(Collectors.toList());
+    }
+
+    // Método para listar os indicadores por eixo
     public List<IndicadorDTO> listarIndicadoresPorEixo(Long eixoId) {
         Eixo eixo = eixoRepository.findById(eixosId)
                 .orElseThrow(() -> new EntityNotFoundException("Eixo não encontrado"));
-        List<Indicador> indicadores = indicadorRepository.findByEixo(eixo);
+        List<Indicador> indicadores = indicadorRepository.findByEixos(eixo);
         return indicadores.stream().map(indicador -> new IndicadorDTO(indicador)).collect(Collectors.toList());
     }
+
 
     public void createEixos(List<Eixo> eixos) {
         for (Eixo eixo : eixos) {
