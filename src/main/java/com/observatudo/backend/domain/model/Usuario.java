@@ -1,6 +1,8 @@
 package com.observatudo.backend.domain.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -14,17 +16,20 @@ public class Usuario {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @NotBlank(message = "O nome não pode ser vazio")
     @Column(name = "nome", nullable = false)
     private String nome;
 
-    @Column(name = "role", nullable = true, columnDefinition = "varchar(255) default 'user'")
+    @Column(name = "role", nullable = false, columnDefinition = "varchar(255) default 'user'")
     private String role = "user";  // Valor padrão é 'user'
 
+    @Email(message = "O email deve ser válido")
+    @NotBlank(message = "O email não pode ser vazio")
     @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<EixoUsuario> eixos = new ArrayList<>();  // Inicializando a lista
+    private List<EixoUsuario> eixos = new ArrayList<>();
 
     // Construtores
     public Usuario() {}
@@ -32,8 +37,18 @@ public class Usuario {
     public Usuario(String nome, String email) {
         this.nome = nome;
         this.email = email;
-        this.role = "user";  // Define o valor padrão
-        this.eixos = new ArrayList<>();  // Inicializa a lista de eixos
+        this.role = "user";  // Valor padrão já está sendo definido
+    }
+
+    // Métodos convenientes
+    public void addEixo(EixoUsuario eixo) {
+        eixos.add(eixo);
+        eixo.setUsuario(this);
+    }
+
+    public void removeEixo(EixoUsuario eixo) {
+        eixos.remove(eixo);
+        eixo.setUsuario(null);
     }
 
     // Getters e Setters
