@@ -120,7 +120,7 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
                 indicador.setFonteId(fonte.getId());
                 indicador.setDono(dono);
                 indicador.setEmail(email);
-                indicador.setCodIndicador(gerarCodIndicador());
+                indicador.setCodigo(gerarCodIndicador());
 
                 // Busca o eixo correto com base no enum Eixos
                 EixoPadrao eixoPadrao = buscarEixoPadrao(obterEixoPeloNomeIndicador(nomeIndicador));
@@ -140,7 +140,7 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
                 indicador = indicadorRepository.save(indicador);
                 logger.info("Indicador criado e salvo: {}", nomeIndicador);
                 logger.info("Indicador criado com fonteId={} e codIndicador={}", indicador.getFonteId(),
-                        indicador.getCodIndicador());
+                        indicador.getCodigo());
 
                 // indicadorService.associarIndicadorAoEixo(indicador.getFonteId(),
                 // indicador.getCodIndicador(), null);
@@ -152,12 +152,12 @@ public class IndicadoresFicticiosLoader extends BaseIndicadorLoaderStrategy {
             if (localidade != null) {
                 ValorIndicadorId valorIndicadorId = new ValorIndicadorId(
                         indicador.getFonteId(),
-                        indicador.getCodIndicador(),
+                        indicador.getCodigo(),
                         localidade.getCodigo(),
                         data);
 
                 logger.info("ValorIndicadorId criado: fonteId={}, codIndicador={}, codigoLocalidade={}, data={}",
-                        indicador.getFonteId(), indicador.getCodIndicador(), localidade.getCodigo(), data);
+                        indicador.getFonteId(), indicador.getCodigo(), localidade.getCodigo(), data);
 
                 ValorIndicador valorIndicador = new ValorIndicador();
                 valorIndicador.setId(valorIndicadorId);

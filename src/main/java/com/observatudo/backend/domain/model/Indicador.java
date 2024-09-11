@@ -120,11 +120,11 @@ public class Indicador {
         this.fonteId = fonteId;
     }
 
-    public String getCodIndicador() {
+    public String getCodigo() {
         return codIndicador;
     }
 
-    public void setCodIndicador(String codIndicador) {
+    public void setCodigo(String codIndicador) {
         this.codIndicador = codIndicador;
     }
 

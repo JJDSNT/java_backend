@@ -28,7 +28,7 @@ public class IndicadorDTO {
     // Construtor que aceita um objeto Indicador
     public IndicadorDTO(Indicador indicador) {
         this.fonteNome = indicador.getFonte() != null ? indicador.getFonte().getNome() : null;
-        this.codIndicador = indicador.getCodIndicador();
+        this.codIndicador = indicador.getCodigo();
         this.nomeIndicador = indicador.getNome();
         this.descricao = indicador.getDescricao();
         // Aqui você precisa adicionar como os valores são mapeados, caso necessário

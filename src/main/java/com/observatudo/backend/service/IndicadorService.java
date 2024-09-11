@@ -35,6 +35,15 @@ public class IndicadorService {
         this.usuarioRepository = usuarioRepository;
     }
 
+    @Autowired
+    private EixoRepository eixoRepository;
+
+    public Eixo buscarEixoPorEnum(Eixos eixoEnum) {
+        // Use a instância injetada de eixoRepository para chamar findById
+        return eixoRepository.findById(eixoEnum)
+            .orElseThrow(() -> new IllegalArgumentException("Eixo não encontrado para o enum: " + eixoEnum));
+    }
+
     // public LocalidadeIndicadoresDTO listarIndicadoresPorLocalidade(Integer
     // cidadeId) {
     // Cidade cidade = localidadeRepository.findCidadeByCodigo(cidadeId)
@@ -162,7 +171,7 @@ public class IndicadorService {
         return new ArrayList<>(indicadoresMap.values());
     }
 
-    public List<Indicador> filtrarIndicadores(String nomeIndicador, String nomeFonte, String eixo) {
+    public List<Indicador> filtrarIndicadoresOLD(String nomeIndicador, String nomeFonte, String eixo) {
         List<Indicador> indicadores = indicadorRepository.findAll();
 
         return indicadores.stream()
@@ -174,6 +183,26 @@ public class IndicadorService {
                                 .anyMatch(eixoPadrao -> eixoPadrao.getNome().equalsIgnoreCase(eixo)))
                 .collect(Collectors.toList());
     }
+
+    // public Eixo buscarEixoPorEnum(Eixos eixoEnum) {
+    //     return EixoRepository.findById(eixoEnum)
+    //         .orElseThrow(() -> new IllegalArgumentException("Eixo não encontrado para o enum: " + eixoEnum));
+    // }
+
+    public List<IndicadorFiltradoDTO> filtrarIndicadores(String nome, String fonte, Eixo eixo) {
+        return indicadorRepository.findByFilters(nome, fonte, eixo).stream()
+            .map(indicador -> {
+                IndicadorFiltradoDTO dto = new IndicadorFiltradoDTO();
+                dto.setNomeIndicador(indicador.getNome());
+                dto.setFonteNome(indicador.getFonte() != null ? indicador.getFonte().getNome() : null);
+                dto.setCodIndicador(indicador.getCodigo());
+                dto.setDescricao(indicador.getDescricao());
+                // Não adicionar os valores relacionados a localidades aqui
+                return dto;
+            })
+            .collect(Collectors.toList());
+    }
+    
 
     private List<IndicadorValoresDTO> agruparIndicadoresOld(List<ValorIndicador> valoresIndicadores) {
         Map<String, IndicadorValoresDTO> indicadoresMap = new HashMap<>();
