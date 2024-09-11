@@ -1,30 +1,55 @@
 package com.observatudo.backend.domain.dto;
 
+import java.util.List;
+
 import com.observatudo.backend.domain.model.Indicador;
 
 public class IndicadorDTO {
-
+    private String nomeIndicador;
+    private List<IndicadorValorDTO> valores;
     private String fonteNome;
     private String codIndicador;
-    private String nome;
     private String descricao;
 
-    public IndicadorDTO() {
-        // Construtor padrão
+    // Construtor para nomeIndicador e lista de valores
+    public IndicadorDTO(String nomeIndicador, List<IndicadorValorDTO> valores) {
+        this.nomeIndicador = nomeIndicador;
+        this.valores = valores;
     }
 
-    public IndicadorDTO(Indicador indicador) {
-        this.codIndicador = indicador.getCodIndicador();
-        this.nome = indicador.getNome();
-        this.descricao = indicador.getDescricao();
-        this.fonteNome = indicador.getFonte().getNome();
-    }
-
-    public IndicadorDTO(String fonteNome, String codIndicador, String nome, String descricao) {
+    // Construtor completo para o contexto de EixoComIndicadoresDTO
+    public IndicadorDTO(String fonteNome, String codIndicador, String nomeIndicador, String descricao) {
         this.fonteNome = fonteNome;
         this.codIndicador = codIndicador;
-        this.nome = nome;
+        this.nomeIndicador = nomeIndicador;
         this.descricao = descricao;
+    }
+
+    // Construtor que aceita um objeto Indicador
+    public IndicadorDTO(Indicador indicador) {
+        this.fonteNome = indicador.getFonte() != null ? indicador.getFonte().getNome() : null;
+        this.codIndicador = indicador.getCodIndicador();
+        this.nomeIndicador = indicador.getNome();
+        this.descricao = indicador.getDescricao();
+        // Aqui você precisa adicionar como os valores são mapeados, caso necessário
+        // this.valores = indicador.getValores().stream().map(ValorIndicador::toDTO).collect(Collectors.toList());
+    }
+
+    // Getters e Setters
+    public String getNomeIndicador() {
+        return nomeIndicador;
+    }
+
+    public void setNomeIndicador(String nomeIndicador) {
+        this.nomeIndicador = nomeIndicador;
+    }
+
+    public List<IndicadorValorDTO> getValores() {
+        return valores;
+    }
+
+    public void setValores(List<IndicadorValorDTO> valores) {
+        this.valores = valores;
     }
 
     public String getFonteNome() {
@@ -43,14 +68,6 @@ public class IndicadorDTO {
         this.codIndicador = codIndicador;
     }
 
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
     public String getDescricao() {
         return descricao;
     }
@@ -58,5 +75,4 @@ public class IndicadorDTO {
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
-
 }
