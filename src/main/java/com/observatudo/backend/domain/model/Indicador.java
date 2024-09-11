@@ -192,7 +192,7 @@ public class Indicador {
         this.eixosUsuario = eixosUsuario;
     }
 
-    public List<ValorIndicador> getValoresIndicador() {
+    public List<ValorIndicador> getValores() {
         return valoresIndicador;
     }
 
