@@ -35,82 +35,120 @@ public class IndicadorService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    public ResumoIndicadorDTO obterResumoIndicadores(Integer codigoLocalidade) {
-        List<Indicador> indicadores = findByLocalidadeCodigo(codigoLocalidade);
-        Map<Eixo, List<IndicadorDTO>> agrupadosPorEixo = new HashMap<>();
+    // public LocalidadeIndicadoresDTO listarIndicadoresPorLocalidade(Integer
+    // cidadeId) {
+    // Cidade cidade = localidadeRepository.findCidadeByCodigo(cidadeId)
+    // .orElseThrow(() -> new EntityNotFoundException("Cidade não encontrada"));
 
-        indicadores.forEach(indicador -> indicador.getEixos()
-                .forEach(eixo -> agrupadosPorEixo.computeIfAbsent(eixo, k -> new ArrayList<>())
-                        .add(new IndicadorDTO(indicador.getFonte().getNome(),
-                                indicador.getCodIndicador(),
-                                indicador.getNome(),
-                                indicador.getDescricao()))));
+    // Estado estado = cidade.getEstado();
+    // Pais pais = estado.getPais();
 
-        ResumoIndicadorDTO resumo = new ResumoIndicadorDTO();
-        resumo.setIndicadoresPorEixo(agrupadosPorEixo);
-        return resumo;
+    // List<ValorIndicador> indicadoresCidade =
+    // valorIndicadorRepository.findByLocalidade(cidade);
+    // List<ValorIndicador> indicadoresEstado =
+    // valorIndicadorRepository.findByLocalidade(estado);
+    // List<ValorIndicador> indicadoresPais =
+    // valorIndicadorRepository.findByLocalidade(pais);
+
+    // return new LocalidadeIndicadoresDTO(cidade, indicadoresCidade, estado,
+    // indicadoresEstado, pais, indicadoresPais);
+    // }
+
+    // public List<IndicadorValoresDTO> listarIndicadoresPorLocalidade(Integer
+    // localidadeId) {
+    // // Busca a Localidade pelo ID
+    // Localidade localidade = localidadeRepository.findById(localidadeId)
+    // .orElseThrow(() -> new EntityNotFoundException("Localidade não encontrada"));
+
+    // // Obtém os valores de indicadores associados à localidade
+    // List<ValorIndicador> valoresIndicadorCidade =
+    // valorIndicadorRepository.findByLocalidade(localidade);
+
+    // // Agrupa os valores dos indicadores por indicador e mapeia para
+    // // IndicadorValoresDTO
+    // return valoresIndicadorCidade.stream()
+    // .collect(Collectors.groupingBy(ValorIndicador::getIndicador)) // Agrupa por
+    // Indicador
+    // .entrySet().stream()
+    // .map(entry -> {
+    // Indicador indicador = entry.getKey(); // Indicador
+    // List<IndicadorValorDTO> valores = entry.getValue().stream() // Lista de
+    // valores do indicador
+    // .map(valorIndicador -> new IndicadorValorDTO(valorIndicador.getData(),
+    // valorIndicador.getValor()))
+    // .collect(Collectors.toList());
+    // return new IndicadorValoresDTO(indicador.getNome(), valores); // Cria o DTO
+    // com nome e valores
+    // })
+    // .collect(Collectors.toList()); // Retorna a lista final de
+    // IndicadorValoresDTO
+    // }
+
+    public LocalidadeIndicadoresDTO listarIndicadoresPorLocalidade(Integer localidadeId) {
+        // Buscar a Localidade pelo ID
+        Localidade localidade = localidadeRepository.findById(localidadeId)
+                .orElseThrow(() -> new EntityNotFoundException("Localidade não encontrada"));
+
+        // Verificar se a localidade é uma cidade
+        if (localidade instanceof Cidade) {
+            Cidade cidade = (Cidade) localidade;
+
+            // Buscar os valores dos indicadores para cidade, estado e país
+            List<ValorIndicador> valoresIndicadorCidade = valorIndicadorRepository.findByLocalidade(cidade);
+            List<ValorIndicador> valoresIndicadorEstado = valorIndicadorRepository.findByLocalidade(cidade.getEstado());
+            List<ValorIndicador> valoresIndicadorPais = valorIndicadorRepository
+                    .findByLocalidade(cidade.getEstado().getPais());
+
+            // Agrupar indicadores e seus valores
+            List<IndicadorValoresDTO> indicadoresCidade = agruparIndicadores(valoresIndicadorCidade);
+            List<IndicadorValoresDTO> indicadoresEstado = agruparIndicadores(valoresIndicadorEstado);
+            List<IndicadorValoresDTO> indicadoresPais = agruparIndicadores(valoresIndicadorPais);
+
+            // Retornar DTO final com cidade, estado e país
+            return new LocalidadeIndicadoresDTO(
+                    cidade.getNome(), indicadoresCidade,
+                    cidade.getEstado().getNome(), indicadoresEstado,
+                    cidade.getEstado().getPais().getNome(), indicadoresPais);
+        } else if (localidade instanceof Estado) {
+            Estado estado = (Estado) localidade;
+
+            // Buscar os valores dos indicadores para estado e país
+            List<ValorIndicador> valoresIndicadorEstado = valorIndicadorRepository.findByLocalidade(estado);
+            List<ValorIndicador> valoresIndicadorPais = valorIndicadorRepository.findByLocalidade(estado.getPais());
+
+            // Agrupar indicadores e seus valores
+            List<IndicadorValoresDTO> indicadoresEstado = agruparIndicadores(valoresIndicadorEstado);
+            List<IndicadorValoresDTO> indicadoresPais = agruparIndicadores(valoresIndicadorPais);
+
+            // Emitir um warning e retornar DTO sem cidade
+            System.out.println("Warning: A localidade fornecida é um estado, cidade não aplicável.");
+
+            return new LocalidadeIndicadoresDTO(
+                    "", new ArrayList<>(), // Cidade vazia
+                    estado.getNome(), indicadoresEstado,
+                    estado.getPais().getNome(), indicadoresPais);
+        } else if (localidade instanceof Pais) {
+            Pais pais = (Pais) localidade;
+
+            // Buscar os valores dos indicadores para o país
+            List<ValorIndicador> valoresIndicadorPais = valorIndicadorRepository.findByLocalidade(pais);
+
+            // Agrupar indicadores e seus valores
+            List<IndicadorValoresDTO> indicadoresPais = agruparIndicadores(valoresIndicadorPais);
+
+            // Emitir um warning e retornar DTO sem cidade e estado
+            System.out.println("Warning: A localidade fornecida é um país, cidade e estado não aplicáveis.");
+
+            return new LocalidadeIndicadoresDTO(
+                    "", new ArrayList<>(), // Cidade vazia
+                    "", new ArrayList<>(), // Estado vazio
+                    pais.getNome(), indicadoresPais);
+        } else {
+            throw new IllegalArgumentException("Tipo de localidade não suportado.");
+        }
     }
 
-    public LocalidadeIndicadoresDTO listarIndicadoresPorLocalidade(Integer cidadeId) {
-        Cidade cidade = localidadeRepository.findCidadeByCodigo(cidadeId)
-                .orElseThrow(() -> new EntityNotFoundException("Cidade não encontrada"));
-
-        Estado estado = cidade.getEstado();
-        Pais pais = estado.getPais();
-
-        List<ValorIndicador> indicadoresCidade = valorIndicadorRepository.findByLocalidade(cidade);
-        List<ValorIndicador> indicadoresEstado = valorIndicadorRepository.findByLocalidade(estado);
-        List<ValorIndicador> indicadoresPais = valorIndicadorRepository.findByLocalidade(pais);
-
-        return new LocalidadeIndicadoresDTO(cidade, indicadoresCidade, estado, indicadoresEstado, pais,
-                indicadoresPais);
-    }
-
-    public LocalidadeIndicadoresDTO getIndicadoresPorLocalidade(Integer codigoLocalidade) {
-        // Busca a cidade pela localidade
-        Cidade cidade = localidadeRepository.findCidadeByCodigo(codigoLocalidade)
-                .orElseThrow(() -> new EntityNotFoundException("Cidade não encontrada"));
-
-        Estado estado = cidade.getEstado();
-        Pais pais = estado.getPais();
-
-        // Busca os valores do indicador para cidade, estado e país
-        List<ValorIndicador> valoresIndicadorCidade = valorIndicadorRepository.findByLocalidade(cidade);
-        List<ValorIndicador> valoresIndicadorEstado = valorIndicadorRepository.findByLocalidade(estado);
-        List<ValorIndicador> valoresIndicadorPais = valorIndicadorRepository.findByLocalidade(pais);
-
-        // Agrupando os indicadores da cidade
-        List<IndicadorValoresDTO> indicadoresCidade = agruparIndicadores(valoresIndicadorCidade);
-
-        // Agrupando os indicadores do estado
-        List<IndicadorValoresDTO> indicadoresEstado = agruparIndicadores(valoresIndicadorEstado);
-
-        // Agrupando os indicadores do país
-        List<IndicadorValoresDTO> indicadoresPais = agruparIndicadores(valoresIndicadorPais);
-
-        // Retorna o DTO final com cidade, estado e país corretamente preenchidos
-        return new LocalidadeIndicadoresDTO(
-                cidade.getNome(), indicadoresCidade,
-                estado.getNome(), indicadoresEstado,
-                pais.getNome(), indicadoresPais);
-    }
-
-    public List<Indicador> filtrarIndicadores(String nomeIndicador, String nomeFonte, String eixo) {
-        // Recupera todos os indicadores
-        List<Indicador> indicadores = indicadorRepository.findAll();
-
-        // Aplica os filtros se os parâmetros estiverem presentes
-        return indicadores.stream()
-                .filter(indicador -> nomeIndicador == null || indicador.getNome().equalsIgnoreCase(nomeIndicador))
-                .filter(indicador -> nomeFonte == null || 
-                        (indicador.getFonte() != null && indicador.getFonte().getNome().equalsIgnoreCase(nomeFonte)))
-                .filter(indicador -> eixo == null || 
-                        indicador.getEixosPadrao().stream()
-                                .anyMatch(eixoPadrao -> eixoPadrao.getNome().equalsIgnoreCase(eixo)))
-                .collect(Collectors.toList());
-    }
-
-    // Método auxiliar para agrupar indicadores
+    // Função de agrupamento
     private List<IndicadorValoresDTO> agruparIndicadores(List<ValorIndicador> valoresIndicadores) {
         Map<String, IndicadorValoresDTO> indicadoresMap = new HashMap<>();
 
@@ -118,7 +156,33 @@ public class IndicadorService {
             String nomeIndicador = valorIndicador.getIndicador().getNome();
             indicadoresMap
                     .computeIfAbsent(nomeIndicador, k -> new IndicadorValoresDTO(nomeIndicador))
-                    .addValor(new ValorDataDTO(valorIndicador.getData(), valorIndicador.getValor()));
+                    .addValor(new IndicadorValorDTO(valorIndicador.getData(), valorIndicador.getValor()));
+        });
+
+        return new ArrayList<>(indicadoresMap.values());
+    }
+
+    public List<Indicador> filtrarIndicadores(String nomeIndicador, String nomeFonte, String eixo) {
+        List<Indicador> indicadores = indicadorRepository.findAll();
+
+        return indicadores.stream()
+                .filter(indicador -> nomeIndicador == null || indicador.getNome().equalsIgnoreCase(nomeIndicador))
+                .filter(indicador -> nomeFonte == null ||
+                        (indicador.getFonte() != null && indicador.getFonte().getNome().equalsIgnoreCase(nomeFonte)))
+                .filter(indicador -> eixo == null ||
+                        indicador.getEixosPadrao().stream()
+                                .anyMatch(eixoPadrao -> eixoPadrao.getNome().equalsIgnoreCase(eixo)))
+                .collect(Collectors.toList());
+    }
+
+    private List<IndicadorValoresDTO> agruparIndicadoresOld(List<ValorIndicador> valoresIndicadores) {
+        Map<String, IndicadorValoresDTO> indicadoresMap = new HashMap<>();
+
+        valoresIndicadores.forEach(valorIndicador -> {
+            String nomeIndicador = valorIndicador.getIndicador().getNome();
+            indicadoresMap
+                    .computeIfAbsent(nomeIndicador, k -> new IndicadorValoresDTO(nomeIndicador))
+                    .addValor(new IndicadorValorDTO(valorIndicador.getData(), valorIndicador.getValor()));
         });
 
         return new ArrayList<>(indicadoresMap.values());
