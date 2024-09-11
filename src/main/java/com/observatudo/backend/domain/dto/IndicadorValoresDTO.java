@@ -5,17 +5,23 @@ import java.util.List;
 
 public class IndicadorValoresDTO {
     private String nomeIndicador;
-    private List<ValorDataDTO> valores;
+    private List<IndicadorValorDTO> valores; // Alterado para IndicadorValorDTO
 
-    // Construtor que inicializa a lista de valores
+    // Construtor com nome e inicializando lista de valores vazia
     public IndicadorValoresDTO(String nomeIndicador) {
         this.nomeIndicador = nomeIndicador;
         this.valores = new ArrayList<>();
     }
 
+    // Construtor com nome e lista de valores de IndicadorValorDTO
+    public IndicadorValoresDTO(String nomeIndicador, List<IndicadorValorDTO> valores) {
+        this.nomeIndicador = nomeIndicador;
+        this.valores = valores != null ? valores : new ArrayList<>();
+    }
+
     // Método para adicionar um novo valor à lista
-    public void addValor(ValorDataDTO valorDataDTO) {
-        this.valores.add(valorDataDTO);
+    public void addValor(IndicadorValorDTO valorDTO) {
+        this.valores.add(valorDTO);
     }
 
     // Getters e setters
@@ -27,11 +33,11 @@ public class IndicadorValoresDTO {
         this.nomeIndicador = nomeIndicador;
     }
 
-    public List<ValorDataDTO> getValores() {
+    public List<IndicadorValorDTO> getValores() {
         return valores;
     }
 
-    public void setValores(List<ValorDataDTO> valores) {
+    public void setValores(List<IndicadorValorDTO> valores) {
         this.valores = valores;
     }
 }
