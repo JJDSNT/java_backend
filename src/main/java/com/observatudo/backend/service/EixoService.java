@@ -1,6 +1,7 @@
 package com.observatudo.backend.service;
 
 import com.observatudo.backend.domain.dto.EixoCaracteristicasDTO;
+import com.observatudo.backend.domain.dto.EixoComIndicadoresDTO;
 import com.observatudo.backend.domain.dto.EixoDTO;
 import com.observatudo.backend.domain.dto.IndicadorDTO;
 import com.observatudo.backend.domain.model.Eixo;
@@ -13,7 +14,6 @@ import com.observatudo.backend.domain.repository.IndicadorRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,57 +22,74 @@ import java.util.stream.Collectors;
 @Service
 public class EixoService {
 
-    @Autowired
-    private EixoRepository eixoRepository;
-
-    @Autowired
-    private EixoPadraoRepository eixoPadraoRepository;
-
-    @Autowired
+    private final EixoRepository eixoRepository;
+    private final EixoPadraoRepository eixoPadraoRepository;
     private final IndicadorRepository indicadorRepository;
 
-    public EixoService(EixoRepository eixoRepository, IndicadorRepository indicadorRepository) {
+    // Construtor com injeção de dependências
+    public EixoService(EixoRepository eixoRepository, EixoPadraoRepository eixoPadraoRepository, IndicadorRepository indicadorRepository) {
         this.eixoRepository = eixoRepository;
+        this.eixoPadraoRepository = eixoPadraoRepository;
         this.indicadorRepository = indicadorRepository;
     }
 
-    private Eixos eixosId;
-
-    // Método para listar todos os eixos
+    /**
+     * Lista todos os eixos disponíveis no sistema.
+     *
+     * @return Lista de EixoDTO contendo as informações dos eixos.
+     */
     public List<EixoDTO> listarEixos() {
         List<Eixo> eixos = eixoRepository.findAll();
-        return eixos.stream().map(eixo -> new EixoDTO(eixo)).collect(Collectors.toList());
+        return eixos.stream().map(EixoDTO::new).collect(Collectors.toList());
     }
 
-    // Método para listar os eixos com seus respectivos indicadores
-    public List<EixoDTO> listarEixosComIndicadores() {
+    /**
+     * Lista todos os eixos com seus respectivos indicadores.
+     *
+     * @return Lista de EixoDTO contendo os eixos e seus indicadores.
+     */
+    public List<EixoComIndicadoresDTO> listarEixosComIndicadores() {
         List<Eixo> eixos = eixoRepository.findAll();
         return eixos.stream().map(eixo -> {
             List<IndicadorDTO> indicadores = indicadorRepository.findByEixos(eixo)
                     .stream()
                     .map(IndicadorDTO::new)
                     .collect(Collectors.toList());
-            EixoDTO eixoDTO = new EixoDTO(eixo);
-            eixoDTO.setIndicadores(indicadores);
-            return eixoDTO;
+            EixoComIndicadoresDTO eixoComIndicadoresDTO = new EixoComIndicadoresDTO(eixo);
+            eixoComIndicadoresDTO.setIndicadores(indicadores);
+            return eixoComIndicadoresDTO;
         }).collect(Collectors.toList());
     }
 
-    // Método para listar os eixos com suas características
+    /**
+     * Lista os eixos com suas respectivas características (ícone, cor, etc.).
+     *
+     * @return Lista de EixoCaracteristicasDTO contendo as características dos eixos.
+     */
     public List<EixoCaracteristicasDTO> listarCaracteristicasEixos() {
         List<Eixo> eixos = eixoRepository.findAll();
         return eixos.stream().map(EixoCaracteristicasDTO::new).collect(Collectors.toList());
     }
 
-    // Método para listar os indicadores por eixo
-    public List<IndicadorDTO> listarIndicadoresPorEixo(Long eixoId) {
-        Eixo eixo = eixoRepository.findById(eixosId)
+    /**
+     * Lista todos os indicadores pertencentes a um eixo específico.
+     *
+     * @param eixoId ID do eixo.
+     * @return Lista de IndicadorDTO contendo os indicadores do eixo.
+     */
+    public List<IndicadorDTO> listarIndicadoresPorEixo(Eixos eixoId) {
+        Eixo eixo = eixoRepository.findById(eixoId)
                 .orElseThrow(() -> new EntityNotFoundException("Eixo não encontrado"));
+        
         List<Indicador> indicadores = indicadorRepository.findByEixos(eixo);
-        return indicadores.stream().map(indicador -> new IndicadorDTO(indicador)).collect(Collectors.toList());
+        return indicadores.stream().map(IndicadorDTO::new).collect(Collectors.toList());
     }
 
-
+    /**
+     * Cria eixos no banco de dados, se eles ainda não existirem.
+     *
+     * @param eixos Lista de eixos a serem criados.
+     */
     public void createEixos(List<Eixo> eixos) {
         for (Eixo eixo : eixos) {
             if (!eixoRepository.existsById(eixo.getId())) {
@@ -81,10 +98,20 @@ public class EixoService {
         }
     }
 
+    /**
+     * Verifica se os eixos já foram carregados no banco de dados.
+     *
+     * @return true se os eixos já estiverem carregados, false caso contrário.
+     */
     public boolean areEixosLoaded() {
         return eixoRepository.count() > 0;
     }
 
+    /**
+     * Retorna o eixo padrão.
+     *
+     * @return EixoPadrao singleton.
+     */
     public EixoPadrao getDefaultEixo() {
         return eixoPadraoRepository.findSingletonEixoPadrao()
                 .orElseThrow(() -> new RuntimeException("Eixo padrão não encontrado"));
