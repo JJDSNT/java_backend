@@ -14,7 +14,8 @@ public class EixoComIndicadoresDTO {
     public EixoComIndicadoresDTO(EixoPadrao eixoPadrao, List<Indicador> indicadores) {
         this.eixoNome = eixoPadrao.getNome();
         this.indicadores = indicadores.stream()
-            .map(IndicadorDTO::new)  // Converter Indicador para IndicadorDTO
+            .map(indicador -> new IndicadorDTO(indicador.getFonte().getNome(), indicador.getCodIndicador(),
+                                                indicador.getNome(), indicador.getDescricao())) // Conversão manual para IndicadorDTO
             .collect(Collectors.toList());
     }
 
@@ -35,4 +36,3 @@ public class EixoComIndicadoresDTO {
         this.indicadores = indicadores;
     }
 }
-
