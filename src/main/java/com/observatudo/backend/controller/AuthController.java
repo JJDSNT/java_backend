@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/api")
-@Tag(name = "Auth Controller", description = "Endpoints for user authentication")
+@Tag(name = "Auth Controller", description = "Endpoint para autenticação de usuários")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
@@ -31,10 +31,10 @@ public class AuthController {
         this.userDetailsService = userDetailsService;
     }
 
-    @Operation(summary = "Authenticate user and return JWT token")
+    @Operation(summary = "Autentica o usuário e retorna o token JWT")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "User authenticated successfully"),
-        @ApiResponse(responseCode = "401", description = "Invalid username or password")
+        @ApiResponse(responseCode = "200", description = "Usuário autenticado com sucesso"),
+        @ApiResponse(responseCode = "401", description = "Nome de usuário ou senha inválidos")
     })
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody AuthRequest authRequest) throws Exception {
@@ -43,7 +43,7 @@ public class AuthController {
                     new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword())
             );
         } catch (Exception e) {
-            throw new Exception("Invalid username or password", e);
+            throw new Exception("Nome de usuário ou senha inválidos", e);
         }
 
         final UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());
