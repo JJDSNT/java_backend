@@ -1,31 +1,24 @@
 package com.observatudo.backend.domain.dto;
 
-import com.observatudo.backend.domain.model.ValorIndicador;
+import java.time.LocalDate;
 
 public class IndicadorValorDTO {
-    private String nomeIndicador;
+    private LocalDate data;
     private Double valor;
 
-    public IndicadorValorDTO(String nomeIndicador, Double valor) {
-        this.nomeIndicador = nomeIndicador;
+    // Construtor
+    public IndicadorValorDTO(LocalDate data, Double valor) {
+        this.data = data;
         this.valor = valor;
     }
 
-    // Construtor que aceita um objeto ValorIndicador
-    public IndicadorValorDTO(ValorIndicador indicadorValor) {
-        if (indicadorValor != null && indicadorValor.getIndicador() != null) {
-            this.nomeIndicador = indicadorValor.getIndicador().getNome();
-            this.valor = indicadorValor.getValor();
-        }
-    }
-
     // Getters e Setters
-    public String getNomeIndicador() {
-        return nomeIndicador;
+    public LocalDate getData() {
+        return data;
     }
 
-    public void setNomeIndicador(String nomeIndicador) {
-        this.nomeIndicador = nomeIndicador;
+    public void setData(LocalDate data) {
+        this.data = data;
     }
 
     public Double getValor() {
