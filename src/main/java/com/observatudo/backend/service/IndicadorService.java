@@ -95,6 +95,21 @@ public class IndicadorService {
                 pais.getNome(), indicadoresPais);
     }
 
+    public List<Indicador> filtrarIndicadores(String nomeIndicador, String nomeFonte, String eixo) {
+        // Recupera todos os indicadores
+        List<Indicador> indicadores = indicadorRepository.findAll();
+
+        // Aplica os filtros se os parâmetros estiverem presentes
+        return indicadores.stream()
+                .filter(indicador -> nomeIndicador == null || indicador.getNome().equalsIgnoreCase(nomeIndicador))
+                .filter(indicador -> nomeFonte == null || 
+                        (indicador.getFonte() != null && indicador.getFonte().getNome().equalsIgnoreCase(nomeFonte)))
+                .filter(indicador -> eixo == null || 
+                        indicador.getEixosPadrao().stream()
+                                .anyMatch(eixoPadrao -> eixoPadrao.getNome().equalsIgnoreCase(eixo)))
+                .collect(Collectors.toList());
+    }
+
     // Método auxiliar para agrupar indicadores
     private List<IndicadorValoresDTO> agruparIndicadores(List<ValorIndicador> valoresIndicadores) {
         Map<String, IndicadorValoresDTO> indicadoresMap = new HashMap<>();
