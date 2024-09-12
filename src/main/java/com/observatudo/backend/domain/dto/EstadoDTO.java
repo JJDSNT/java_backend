@@ -58,10 +58,10 @@ public class EstadoDTO {
     @Override
     public String toString() {
         return "EstadoDTO{" +
-               "codigo=" + codigo +
-               ", nome='" + nome + '\'' +
-               ", sigla='" + sigla + '\'' +
-               ", cidades=" + cidades +
-               '}';
+                "codigo=" + codigo +
+                ", nome='" + nome + '\'' +
+                ", sigla='" + sigla + '\'' +
+                ", cidades=" + cidades +
+                '}';
     }
 }

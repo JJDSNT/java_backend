@@ -13,7 +13,7 @@ public class Estado extends Localidade {
     @JsonManagedReference
     private List<Cidade> cidades;
 
-    @Column(name = "sigla")
+    @Column(name = "sigla")//nullable = false quando tiver siglas das cidades tbm
     private String sigla;
 
     @ManyToOne
@@ -33,6 +33,7 @@ public class Estado extends Localidade {
     public Estado(Integer codigo, String nome, String sigla, Pais pais) {
         super(codigo, nome);
         this.pais = pais;
+        this.sigla = sigla; 
     }
 
     public List<Cidade> getCidades() {

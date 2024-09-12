@@ -41,6 +41,7 @@ public class LocalidadeService {
                     // Atualizar o EstadoDTO para incluir a lista de cidades convertidas
                     return new EstadoDTO(estado.getCodigo(), estado.getNome(), estado.getSigla(), cidadeDTOs);
                 })
+                .sorted((e1, e2) -> e1.getSigla().compareToIgnoreCase(e2.getSigla()))
                 .collect(Collectors.toList());
     }
 

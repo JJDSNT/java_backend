@@ -87,29 +87,37 @@ public class LocalidadesLoader {
         ClassPathResource resource = new ClassPathResource(PATH_ESTADOS);
         try (Reader reader = new InputStreamReader(resource.getInputStream());
              CSVReader csvReader = new CSVReader(reader)) {
-
+    
             List<String[]> rows = csvReader.readAll();
             rows.remove(0); // Pular cabeçalho
-
+    
             logger.info("Carregando estados ...");
             for (String[] row : rows) {
                 Integer codigo = Integer.parseInt(row[0]);
                 String nome = row[1];
                 String sigla = row[2];
+    
+                logger.info("Lendo linha: Código = {}, Nome = {}, Sigla = {}", codigo, nome, sigla);
+    
                 Integer paisCodigo = 1058; // Defina o código do país conforme necessário
-
                 Pais pais = paisRepository.findByCodigo(paisCodigo);
-
+    
                 if (estadoRepository.findByCodigo(codigo) == null) {
                     Estado estado = new Estado(codigo, nome, sigla, pais);
-                    estadoRepository.save(estado);
-                    logger.info("Estado {} criado", estado.getNome());
+                    try {
+                        //logger.info("Salvando linha: Código = {}, Nome = {}, Sigla = {}", codigo, nome, sigla);
+                        estadoRepository.save(estado);
+                    } catch (Exception e) {
+                        logger.error("Erro ao salvar estado: Código = {}, Nome = {}, Sigla = {}", codigo, nome, sigla, e);
+                        throw e;
+                    }
                 } else {
                     logger.debug("Estado {} já existe no banco de dados", nome);
                 }
             }
         }
     }
+    
 
     private void loadCidades() throws IOException, CsvException {
         ClassPathResource resource = new ClassPathResource(PATH_CIDADES);
