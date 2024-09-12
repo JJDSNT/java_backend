@@ -25,18 +25,30 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api", "/api-docs/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                .anyRequest().permitAll()//authenticated()
-            )
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
-        
+                .authorizeHttpRequests(authz -> authz
+                        .requestMatchers("/api/**", "/api-docs/**", "/v3/api-docs/**", "/swagger-ui/**",
+                                "/swagger-ui.html", "/h2-console/**")
+                        .permitAll() // Permitir acesso ao H2 Console
+                        .anyRequest().authenticated() // Assegura que outras rotas precisam de autenticação
+                )
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // JWT
+                                                                                                              // gerencia
+                                                                                                              // a
+                                                                                                              // sessão
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class); // Filtro JWT
+
+        // Nova forma de desabilitar CSRF
+        http.csrf(csrf -> csrf.disable());
+
+        // Desabilitar frameOptions para permitir o uso de frames no H2 Console
+        http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
+
         return http.build();
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
