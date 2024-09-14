@@ -1,3 +1,28 @@
+## SonarQube
+
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=JJDSNT_java_backend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=JJDSNT_java_backend)
+&nbsp;
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=JJDSNT_java_backend&metric=bugs)](https://sonarcloud.io/summary/new_code?id=JJDSNT_java_backend)
+&nbsp;
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=JJDSNT_java_backend&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=JJDSNT_java_backend)
+&nbsp;
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=JJDSNT_java_backend&metric=coverage)](https://sonarcloud.io/summary/new_code?id=JJDSNT_java_backend)
+&nbsp;
+[![Duplicated Lines (%)](https://sonarcloud.io/api/project_badges/measure?project=JJDSNT_java_backend&metric=duplicated_lines_density)](https://sonarcloud.io/summary/new_code?id=JJDSNT_java_backend)
+&nbsp;
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=JJDSNT_java_backend&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=JJDSNT_java_backend)
+&nbsp;
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=JJDSNT_java_backend&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=JJDSNT_java_backend)
+&nbsp;
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=JJDSNT_java_backend&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=JJDSNT_java_backend)
+&nbsp;
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=JJDSNT_java_backend&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=JJDSNT_java_backend)
+&nbsp;
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=JJDSNT_java_backend&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=JJDSNT_java_backend)
+&nbsp;
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=JJDSNT_java_backend&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=JJDSNT_java_backend)
+
+
 Esse é o backend para um dashboard de indicadores civicos inspirado nos códigos:
 
 https://github.com/digitalinnovationone/santander-dev-week-2023-api
