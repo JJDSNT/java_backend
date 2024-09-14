@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/indicadores")
+@RequestMapping("/api/indicadores")
 @Tag(name = "Indicadores", description = "Operações relacionadas a indicadores")
 public class IndicadorController {
 
@@ -82,7 +82,7 @@ public class IndicadorController {
                         @ApiResponse(responseCode = "400", description = "Eixo inválido", content = @Content),
                         @ApiResponse(responseCode = "500", description = "Erro no servidor", content = @Content)
         })
-        @GetMapping("/indicadores/filtrar")
+        @GetMapping("/filtrar")
         public ResponseEntity<List<IndicadorFiltradoDTO>> filtrarIndicadores(
                         @RequestParam(required = false) String nome,
                         @RequestParam(required = false) String fonte,
