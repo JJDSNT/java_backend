@@ -28,9 +28,9 @@ public class LocalidadeController {
         this.localidadeService = localidadeService;
     }
 
-    @Operation(summary = "Lista estados e suas cidades", description = "Retorna todos os estados e suas respectivas cidades.")
+    @Operation(summary = "Lista estados, suas cidades e o país", description = "Retorna todos os estados, suas respectivas cidades e o país associado.")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Estados e cidades listados com sucesso",
+        @ApiResponse(responseCode = "200", description = "Estados, cidades e país listados com sucesso",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = EstadoDTO.class))),
         @ApiResponse(responseCode = "500", description = "Erro no servidor", content = @Content)
     })
